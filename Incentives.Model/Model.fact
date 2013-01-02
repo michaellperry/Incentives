@@ -1,0 +1,67 @@
+namespace Incentives.Model;
+
+fact Individual {
+key:
+    string anonymousId;
+}
+
+fact Profile {
+key:
+	unique;
+
+mutable:
+	string name;
+
+query:
+	Activity* activities {
+		Activity a : a.profileQuarter.profile = this
+	}
+}
+
+fact Company {
+key:
+	string identifier;
+}
+
+fact Quarter {
+key:
+	Company company;
+	date startDate;
+}
+
+fact Category {
+key:
+	Company company;
+	string description;
+}
+
+fact ActivityDefinition {
+key:
+	Category category;
+	string description;
+	string qualifier;
+}
+
+fact ActivityReward {
+key:
+	ActivityDefinition definition;
+	Quarter quarter;
+
+mutable:
+	int points;
+}
+
+fact ProfileQuarter {
+key:
+	Profile profile;
+	Quarter quarter;
+}
+
+fact Activity {
+key:
+	date activityDate;
+	string description;
+	ProfileQuarter profileQuarter;
+	ActivityReward activityReward;
+	int multiplier;
+}
