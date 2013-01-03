@@ -31,13 +31,19 @@ key:
 
 fact Category {
 key:
+	unique;
 	Company company;
+
+mutable:
 	string description;
 }
 
 fact ActivityDefinition {
 key:
+	unique;
 	Category category;
+
+mutable:
 	string description;
 	string qualifier;
 }
@@ -60,8 +66,10 @@ key:
 fact Activity {
 key:
 	date activityDate;
-	string description;
 	ProfileQuarter profileQuarter;
 	ActivityReward activityReward;
+
+mutable:
+	string description;
 	int multiplier;
 }

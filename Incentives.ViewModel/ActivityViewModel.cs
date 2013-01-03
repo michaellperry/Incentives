@@ -62,7 +62,7 @@ namespace Incentives.ViewModel
                     else
                         return String.Format("{0}/{1}",
                             _activity.ActivityReward.Points.Value,
-                            _activity.ActivityReward.Definition.Qualifier);
+                            _activity.ActivityReward.Definition.Qualifier.Value);
                 }
 
                 return null;
@@ -74,7 +74,13 @@ namespace Incentives.ViewModel
             get
             {
                 if (_activity.ActivityReward != null)
-                    return _activity.ActivityReward.Points * _activity.Multiplier;
+                {
+                    int multiplier = 1;
+                    if (_activity.Multiplier.Candidates.Any())
+                        multiplier = _activity.Multiplier.Value;
+
+                    return _activity.ActivityReward.Points * multiplier;
+                }
 
                 return 0;
             }
