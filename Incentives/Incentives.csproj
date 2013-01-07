@@ -117,11 +117,23 @@
     <Compile Include="Views\ActivityFeedView.xaml.cs">
       <DependentUpon>ActivityFeedView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ActivityLineLarge.xaml.cs">
+      <DependentUpon>ActivityLineLarge.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ActivityLineSmall.xaml.cs">
+      <DependentUpon>ActivityLineSmall.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CategoryButtonView.xaml.cs">
       <DependentUpon>CategoryButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LeaderTickerView.xaml.cs">
       <DependentUpon>LeaderTickerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfileBadgeLarge.xaml.cs">
+      <DependentUpon>ProfileBadgeLarge.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfileBadgeSmall.xaml.cs">
+      <DependentUpon>ProfileBadgeSmall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProfileView.xaml.cs">
       <DependentUpon>ProfileView.xaml</DependentUpon>
@@ -160,6 +172,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ActivityLineLarge.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ActivityLineSmall.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CategoryButtonView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -167,6 +187,14 @@
     <Page Include="Views\LeaderTickerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ProfileBadgeLarge.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProfileBadgeSmall.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProfileView.xaml">
       <Generator>MSBuild:Compile</Generator>

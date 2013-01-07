@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Incentives.TipView"
+    x:Class="Incentives.Views.TipView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Incentives"
@@ -8,9 +8,10 @@
     mc:Ignorable="d"
     d:DesignHeight="104"
     d:DesignWidth="1366">
-    
-    <Grid>
-    	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Have you passed out a business card today?" VerticalAlignment="Top" FontSize="48" Margin="24"/>
 
-    </Grid>
+    <TextBlock
+        Text="Have you passed out a business card today?"
+        FontSize="48"
+        Margin="24" />
+
 </UserControl>

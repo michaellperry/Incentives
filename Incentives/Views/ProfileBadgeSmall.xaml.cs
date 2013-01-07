@@ -16,9 +16,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Incentives.Views
 {
-    public sealed partial class ProfileView : UserControl
+    public sealed partial class ProfileBadgeSmall : UserControl
     {
-        public ProfileView()
+        public ProfileBadgeSmall()
         {
             this.InitializeComponent();
         }

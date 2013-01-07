@@ -1,82 +1,71 @@
 ﻿<UserControl
-    x:Class="Incentives.LeaderTickerView"
+    x:Class="Incentives.Views.LeaderTickerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Incentives"
+    xmlns:views="using:Incentives.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="151"
+    d:DesignHeight="141.5"
     d:DesignWidth="1366">
-    
-    <StackPanel Orientation="Horizontal">
-    	<Grid Height="93" VerticalAlignment="Top" Margin="12,18,12,12">
-    		<Grid.RowDefinitions>
-    			<RowDefinition/>
-    		</Grid.RowDefinitions>
-    		<Grid.ColumnDefinitions>
-    			<ColumnDefinition Width="Auto"/>
-    			<ColumnDefinition Width="92"/>
-    			<ColumnDefinition Width="Auto"/>
-    		</Grid.ColumnDefinitions>
-    		<TextBlock FontSize="48" Grid.Column="2" Margin="6,22,6,1" Text="Tim R."/>
-    		<Rectangle Fill="#FFF4F4F5" Margin="6" Stroke="Black" Grid.Column="1"/>
-    		<Grid HorizontalAlignment="Right" Width="42" Height="42" VerticalAlignment="Top" Grid.ColumnSpan="2">
-    			<Ellipse Fill="#FFF4F4F5" Stroke="Black"/>
-    			<TextBlock TextWrapping="Wrap" Text="312" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" FontSize="18.667"/>
-    		</Grid>
-    		<TextBlock Margin="12,22,6,1" TextWrapping="Wrap" Text="1." FontSize="48"/>
-    	</Grid>
-    	<Grid Height="93" VerticalAlignment="Top" Margin="12,18,12,12">
-    		<Grid.RowDefinitions>
-    			<RowDefinition/>
-    		</Grid.RowDefinitions>
-    		<Grid.ColumnDefinitions>
-    			<ColumnDefinition Width="Auto"/>
-    			<ColumnDefinition Width="92"/>
-    			<ColumnDefinition Width="Auto"/>
-    		</Grid.ColumnDefinitions>
-    		<TextBlock FontSize="48" Grid.Column="2" Margin="6,22,6,1" Text="Devlin L."/>
-    		<Rectangle Fill="#FFF4F4F5" Margin="6" Stroke="Black" Grid.Column="1"/>
-    		<Grid HorizontalAlignment="Right" Width="42" Height="42" VerticalAlignment="Top" Grid.ColumnSpan="2">
-    			<Ellipse Fill="#FFF4F4F5" Stroke="Black"/>
-    			<TextBlock TextWrapping="Wrap" Text="312" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" FontSize="18.667"/>
-    		</Grid>
-    		<TextBlock Margin="28,22,6,1" TextWrapping="Wrap" Text="2." FontSize="48"/>
-    	</Grid>
-    	<Grid Height="93" VerticalAlignment="Top" Margin="12,18,12,12">
-    		<Grid.RowDefinitions>
-    			<RowDefinition/>
-    		</Grid.RowDefinitions>
-    		<Grid.ColumnDefinitions>
-    			<ColumnDefinition Width="Auto"/>
-    			<ColumnDefinition Width="92"/>
-    			<ColumnDefinition Width="Auto"/>
-    		</Grid.ColumnDefinitions>
-    		<TextBlock FontSize="48" Grid.Column="2" Margin="6,22,6,1" Text="Kristie C."/>
-    		<Rectangle Fill="#FFF4F4F5" Margin="6" Stroke="Black" Grid.Column="1"/>
-    		<Grid HorizontalAlignment="Right" Width="42" Height="42" VerticalAlignment="Top" Grid.ColumnSpan="2">
-    			<Ellipse Fill="#FFF4F4F5" Stroke="Black"/>
-    			<TextBlock TextWrapping="Wrap" Text="312" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" FontSize="18.667"/>
-    		</Grid>
-    		<TextBlock Margin="28,22,6,1" TextWrapping="Wrap" Text="3." FontSize="48"/>
-    	</Grid>
-    	<Grid Height="93" VerticalAlignment="Top" Margin="12,18,12,12">
-    		<Grid.RowDefinitions>
-    			<RowDefinition/>
-    		</Grid.RowDefinitions>
-    		<Grid.ColumnDefinitions>
-    			<ColumnDefinition Width="Auto"/>
-    			<ColumnDefinition Width="92"/>
-    			<ColumnDefinition Width="Auto"/>
-    		</Grid.ColumnDefinitions>
-    		<TextBlock FontSize="48" Grid.Column="2" Margin="6,22,6,1" Text="Chris W."/>
-    		<Rectangle Fill="#FFF4F4F5" Margin="6" Stroke="Black" Grid.Column="1"/>
-    		<Grid HorizontalAlignment="Right" Width="42" Height="42" VerticalAlignment="Top" Grid.ColumnSpan="2">
-    			<Ellipse Fill="#FFF4F4F5" Stroke="Black"/>
-    			<TextBlock TextWrapping="Wrap" Text="312" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" FontSize="18.667"/>
-    		</Grid>
-    		<TextBlock Margin="28,22,6,1" TextWrapping="Wrap" Text="4." FontSize="48"/>
-    	</Grid>
-    </StackPanel>
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Hidden"
+        HorizontalScrollMode="Auto"
+        VerticalScrollMode="Disabled"
+        ZoomMode="Disabled">
+        <ItemsControl
+            Margin="0,18,0,24">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Left" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid
+                        VerticalAlignment="Top"
+                        Margin="24,6,24,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition
+                                Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition
+                                Width="Auto" />
+                            <ColumnDefinition
+                                Width="92" />
+                            <ColumnDefinition
+                                Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Margin="0,22,6,0"
+                            TextWrapping="Wrap"
+                            Text="1."
+                            FontSize="48"
+                            VerticalAlignment="Top" />
+                        <views:ProfileBadgeLarge
+                            Grid.Column="1"
+                            Margin="6,0" />
+                        <TextBlock
+                            FontSize="48"
+                            Grid.Column="2"
+                            Margin="6,22,0,0"
+                            Text="{Binding}"
+                            VerticalAlignment="Top" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <x:String>Tim R.</x:String>
+            <x:String>Devlin L.</x:String>
+            <x:String>Kristie C.</x:String>
+            <x:String>Chris W.</x:String>
+            <x:String>Dave O.</x:String>
+            <x:String>Lori D.</x:String>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>

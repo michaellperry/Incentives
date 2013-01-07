@@ -16,9 +16,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Incentives.Views
 {
-    public sealed partial class ProfileView : UserControl
+    public sealed partial class ActivityLineSmall : UserControl
     {
-        public ProfileView()
+        public ActivityLineSmall()
         {
             this.InitializeComponent();
         }
