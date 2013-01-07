@@ -1,0 +1,9 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Incentives">
+	<SolidColorBrush x:Key="PointIndicatorFillBrush" Color="#FFF4F4F5"/>
+	<SolidColorBrush x:Key="PointIndicatorStrokeBrush" Color="Black"/>
+	<SolidColorBrush x:Key="PointIndicatorForegroundBrush" Color="Black"/>
+    
+</ResourceDictionary>

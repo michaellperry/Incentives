@@ -14,8 +14,8 @@
             Fill="#FFF4F4F5"
             Stroke="Black" />
         <Ellipse
-            Fill="#FFF4F4F5"
-            Stroke="Black"
+            Fill="{StaticResource PointIndicatorFillBrush}"
+            Stroke="{StaticResource PointIndicatorStrokeBrush}"
             Width="42"
             Height="42"
             HorizontalAlignment="Right"
@@ -28,6 +28,6 @@
             HorizontalAlignment="Right"
             TextAlignment="Center"
             Margin="0,4,-6,0"
-            FontSize="18.667" />
+            FontSize="18.667" Foreground="{StaticResource PointIndicatorForegroundBrush}" />
     </Grid>
 </UserControl>

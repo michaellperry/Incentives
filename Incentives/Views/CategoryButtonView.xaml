@@ -9,6 +9,64 @@
     d:DesignHeight="513.338"
     d:DesignWidth="870">
 	<UserControl.Resources>
+		<Style x:Key="CategoryButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="{StaticResource ButtonBackgroundThemeBrush}"/>
+			<Setter Property="Foreground" Value="{StaticResource ButtonForegroundThemeBrush}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource ButtonBorderThemeBrush}"/>
+			<Setter Property="BorderThickness" Value="{StaticResource ButtonBorderThemeThickness}"/>
+			<Setter Property="Padding" Value="12,4,12,4"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Grid Width="180" Height="216">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="168"/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="PointerOver"/>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimation Duration="0" To="White" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="ellipse" d:IsOptimized="True"/>
+											<ColorAnimation Duration="0" To="White" Storyboard.TargetProperty="(ContentPresenter.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Label" d:IsOptimized="True"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled">
+										<Storyboard>
+											<ColorAnimation Duration="0" To="#66FFFFFF" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="ellipse" d:IsOptimized="True"/>
+											<ColorAnimation Duration="0" To="#66FFFFFF" Storyboard.TargetProperty="(ContentPresenter.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Label" d:IsOptimized="True"/>
+										</Storyboard>
+									</VisualState>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="FocusStates">
+									<VisualState x:Name="Focused">
+										<Storyboard>
+											<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FocusVisualWhite"/>
+											<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FocusVisualBlack"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Unfocused"/>
+									<VisualState x:Name="PointerFocused"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Ellipse x:Name="ellipse" Margin="12,12,12,0" StrokeEndLineCap="Square" StrokeThickness="2" Stroke="Black" Fill="#00000000"/>
+							<Rectangle x:Name="FocusVisualWhite" IsHitTestVisible="False" Opacity="0" StrokeDashOffset="1.5" StrokeEndLineCap="Square" Stroke="{StaticResource FocusVisualWhiteStrokeThemeBrush}" StrokeDashArray="1,1" Grid.RowSpan="2"/>
+							<Rectangle x:Name="FocusVisualBlack" IsHitTestVisible="False" Opacity="0" StrokeDashOffset="0.5" StrokeEndLineCap="Square" Stroke="{StaticResource FocusVisualBlackStrokeThemeBrush}" StrokeDashArray="1,1" Grid.RowSpan="2"/>
+							<TextBlock x:Name="Label" Text="{Binding}" FontSize="24" Grid.Row="1" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+							<Ellipse Fill="{StaticResource PointIndicatorFillBrush}" HorizontalAlignment="Left" Height="60" Margin="111,10,0,0" StrokeEndLineCap="Square" StrokeThickness="2" VerticalAlignment="Top" Width="60" Stroke="{StaticResource PointIndicatorStrokeBrush}"/>
+							<TextBlock HorizontalAlignment="Right" Margin="0,24,10,0" TextWrapping="Wrap" Text="166" VerticalAlignment="Top" Width="60" Foreground="{StaticResource PointIndicatorForegroundBrush}" FontSize="21.333" TextAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 	</UserControl.Resources>
 
     <ItemsControl Margin="24,24,0,0">
@@ -18,38 +76,17 @@
                     Orientation="Horizontal" />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Button Content="{Binding}" Style="{StaticResource CategoryButtonStyle}" Margin="0,0,24,24"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
 
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="Blue" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="Red" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="Yellow" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="Green" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="Gray" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="LightBlue" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="Pink" Margin="0,0,24,60" />
-        <Rectangle
-            Height="180"
-            Width="180"
-            Fill="YellowGreen" Margin="0,0,24,60" />
+        <x:String>Recruiting</x:String>
+        <x:String>User Groups</x:String>
+        <x:String>Networking</x:String>
+        <x:String>Blogging</x:String>
+        <x:String>Open Source</x:String>
+        <x:String>Other</x:String>
     </ItemsControl>
 </UserControl>
