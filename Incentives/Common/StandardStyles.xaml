@@ -1424,6 +1424,16 @@
         BackButtonStyle is used to style a Button for use in the title area of a page.  Margins appropriate for
         the conventional page layout are included as part of the style.
     -->
+    <SolidColorBrush
+        x:Key="BackButtonForegroundThemeBrush"
+        Color="Black" />
+    <SolidColorBrush
+        x:Key="BackButtonPointerOverForegroundThemeBrush"
+        Color="Black" />
+    <SolidColorBrush
+        x:Key="BackButtonPressedForegroundThemeBrush"
+        Color="White" />
+    
     <Style x:Key="BackButtonStyle" TargetType="Button">
         <Setter Property="MinWidth" Value="0"/>
         <Setter Property="Width" Value="48"/>
@@ -1826,4 +1836,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <SolidColorBrush x:Key="LightBackgroundBrush" Color="#FFEAE8E8"/>
 </ResourceDictionary>

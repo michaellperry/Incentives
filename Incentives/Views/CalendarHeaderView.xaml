@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="Incentives.Views.CalendarHeaderView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Incentives.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="139"
+    d:DesignWidth="1019">
+    
+    <Grid>
+    	<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*"/>
+    	</Grid.ColumnDefinitions>
+    	<Grid.RowDefinitions>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    	</Grid.RowDefinitions>
+    	<Button Content="Back" Height="Auto" Margin="12,12,0,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource BackButtonStyle}" Grid.ColumnSpan="7" Click="Back_Click"/>
+
+    	<TextBlock TextWrapping="Wrap" Text="January 2013" FontSize="48" VerticalAlignment="Bottom" Margin="75,12,0,12" Foreground="{StaticResource SubtleTextBrush}" Grid.ColumnSpan="7"/>
+    	<Border BorderBrush="White" BorderThickness="0,0,0,2" Grid.Row="1">
+    		<TextBlock TextWrapping="Wrap" Text="Sunday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+    	<Border BorderBrush="White" BorderThickness="2,0,0,2" Grid.Row="1" Grid.Column="1">
+    		<TextBlock TextWrapping="Wrap" Text="Monday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+    	<Border BorderBrush="White" BorderThickness="2,0,0,2" Grid.Row="1" Grid.Column="2">
+    		<TextBlock TextWrapping="Wrap" Text="Tuesday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+    	<Border BorderBrush="White" BorderThickness="2,0,0,2" Grid.Row="1" Grid.Column="3">
+    		<TextBlock TextWrapping="Wrap" Text="Wednesday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+    	<Border BorderBrush="White" BorderThickness="2,0,0,2" Grid.Row="1" Grid.Column="5">
+    		<TextBlock TextWrapping="Wrap" Text="Friday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+    	<Border BorderBrush="White" BorderThickness="2,0,0,2" Grid.Row="1" Grid.Column="4">
+    		<TextBlock TextWrapping="Wrap" Text="Thursday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+    	<Border BorderBrush="White" BorderThickness="2,0,0,2" Grid.Row="1" Grid.Column="6">
+    		<TextBlock TextWrapping="Wrap" Text="Saturday" FontSize="18.667" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{StaticResource SubtleTextBrush}" Margin="6,6,0,6"/>
+    	</Border>
+
+    </Grid>
+</UserControl>

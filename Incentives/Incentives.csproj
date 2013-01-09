@@ -103,17 +103,33 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ActivityPage.xaml.cs">
+      <DependentUpon>ActivityPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\DependentExtensions.cs" />
     <Compile Include="HTTPConfigurationProvider.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SynchronizationService.cs" />
+    <Compile Include="ValueConverters\EvenOddValueConverter.cs" />
+    <Compile Include="ViewModels\ActivityViewModel.cs" />
+    <Compile Include="Views\CalendarDayView.xaml.cs">
+      <DependentUpon>CalendarDayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\CalendarDayViewModel.cs" />
+    <Compile Include="ViewModels\INavigationService.cs" />
+    <Compile Include="ViewModels\MacroViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="ViewModels\CalendarWeekViewModel.cs" />
+    <Compile Include="Views\ActivityDetailsView.xaml.cs">
+      <DependentUpon>ActivityDetailsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ActivityFeedView.xaml.cs">
       <DependentUpon>ActivityFeedView.xaml</DependentUpon>
     </Compile>
@@ -122,6 +138,15 @@
     </Compile>
     <Compile Include="Views\ActivityLineSmall.xaml.cs">
       <DependentUpon>ActivityLineSmall.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalendarBodyView.xaml.cs">
+      <DependentUpon>CalendarBodyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalendarHeaderView.xaml.cs">
+      <DependentUpon>CalendarHeaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalendarWeekView.xaml.cs">
+      <DependentUpon>CalendarWeekView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CategoryButtonView.xaml.cs">
       <DependentUpon>CategoryButtonView.xaml</DependentUpon>
@@ -160,6 +185,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ActivityPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Common\Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -172,6 +201,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\CalendarDayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ActivityDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ActivityFeedView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -181,6 +218,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ActivityLineSmall.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalendarBodyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalendarHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalendarWeekView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

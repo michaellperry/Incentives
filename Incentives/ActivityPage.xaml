@@ -1,0 +1,35 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Incentives"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Views="using:Incentives.Views"
+    xmlns:vm="using:Incentives.ViewModels"
+    x:Class="Incentives.ActivityPage"
+    mc:Ignorable="d"
+    DataContext="{Binding Activity, Source={StaticResource Locator}}">
+
+    <Grid
+        Background="{StaticResource LightBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="508*" />
+            <ColumnDefinition
+                Width="175*" />
+        </Grid.ColumnDefinitions>
+
+        <Views:CalendarHeaderView />
+        <Views:CalendarBodyView
+            Grid.Row="1" />
+        <Views:ActivityDetailsView
+            Grid.Column="1"
+            Grid.RowSpan="2" />
+
+    </Grid>
+</Page>

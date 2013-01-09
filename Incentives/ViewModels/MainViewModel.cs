@@ -33,5 +33,21 @@ namespace Incentives.ViewModels
                     : _community.LastException.Message;
             }
         }
+
+        public IEnumerable<MacroViewModel> Macros
+        {
+            get
+            {
+                return new MacroViewModel[]
+                {
+                    new MacroViewModel("Recruiting"),
+                    new MacroViewModel("User Groups"),
+                    new MacroViewModel("Networking"),
+                    new MacroViewModel("Blogging"),
+                    new MacroViewModel("Open Source"),
+                    new MacroViewModel("Other")
+                };
+            }
+        }
     }
 }

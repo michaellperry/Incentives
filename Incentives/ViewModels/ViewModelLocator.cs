@@ -27,5 +27,13 @@ namespace Incentives.ViewModels
                         _synchronizationService.Individual));
             }
         }
+
+        public object Activity
+        {
+            get
+            {
+                return ViewModel(() => new ActivityViewModel());
+            }
+        }
     }
 }

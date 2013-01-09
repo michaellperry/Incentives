@@ -5,5 +5,7 @@
 	<SolidColorBrush x:Key="PointIndicatorFillBrush" Color="#FFF4F4F5"/>
 	<SolidColorBrush x:Key="PointIndicatorStrokeBrush" Color="Black"/>
 	<SolidColorBrush x:Key="PointIndicatorForegroundBrush" Color="Black"/>
+	<SolidColorBrush x:Key="SubtleTextBrush" Color="#FF575757"/>
+	<SolidColorBrush x:Key="LessLightBackgroundBrush" Color="#E0E0E0"/>
     
 </ResourceDictionary>
