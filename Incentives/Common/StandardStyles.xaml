@@ -246,6 +246,24 @@
         and should fit within the 40 pixel radius glyph provided.  16-point Segoe UI Symbol is used for content text 
         to simplify the use of glyphs from that font.  AutomationProperties.Name is used for the text below the glyph.
     -->
+    <SolidColorBrush
+        x:Key="AppBarItemBackgroundThemeBrush"
+        Color="#E5FFFFFF" />
+    <SolidColorBrush
+        x:Key="AppBarItemDisabledForegroundThemeBrush"
+        Color="#66000000" />
+    <SolidColorBrush
+        x:Key="AppBarItemForegroundThemeBrush"
+        Color="Black" />
+    <SolidColorBrush
+        x:Key="AppBarItemPointerOverBackgroundThemeBrush"
+        Color="#21000000" />
+    <SolidColorBrush
+        x:Key="AppBarItemPointerOverForegroundThemeBrush"
+        Color="Black" />
+    <SolidColorBrush
+        x:Key="AppBarItemPressedForegroundThemeBrush"
+        Color="White" />
     <Style x:Key="AppBarButtonStyle" TargetType="ButtonBase">
         <Setter Property="Foreground" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -325,7 +343,7 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPointerOverBackgroundThemeBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPointerOverForegroundThemeBrush}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPointerOverBackgroundThemeBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -406,6 +424,63 @@
         Uncomment any style you reference (as not all may be required).
     -->
 
+    <Style
+        x:Key="NoAppBarButtonStyle"
+        TargetType="ButtonBase"
+        BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter
+            Property="AutomationProperties.AutomationId"
+            Value="NoAppBarButton" />
+        <Setter
+            Property="AutomationProperties.Name"
+            Value="No" />
+        <Setter
+            Property="Content"
+            Value="&#xE10A;" />
+    </Style>
+    <Style
+        x:Key="YesAppBarButtonStyle"
+        TargetType="ButtonBase"
+        BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter
+            Property="AutomationProperties.AutomationId"
+            Value="YesAppBarButton" />
+        <Setter
+            Property="AutomationProperties.Name"
+            Value="Yes" />
+        <Setter
+            Property="Content"
+            Value="&#xE10B;" />
+    </Style>
+    <Style
+        x:Key="CancelAppBarButtonStyle"
+        TargetType="ButtonBase"
+        BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter
+            Property="AutomationProperties.AutomationId"
+            Value="NoAppBarButton" />
+        <Setter
+            Property="AutomationProperties.Name"
+            Value="Cancel" />
+        <Setter
+            Property="Content"
+            Value="&#xE10A;" />
+    </Style>
+    <Style
+        x:Key="OkAppBarButtonStyle"
+        TargetType="ButtonBase"
+        BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter
+            Property="AutomationProperties.AutomationId"
+            Value="YesAppBarButton" />
+        <Setter
+            Property="AutomationProperties.Name"
+            Value="OK" />
+        <Setter
+            Property="Content"
+            Value="&#xE10B;" />
+    </Style>
+
     <!--
     
     <Style x:Key="SkipBackAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
@@ -457,16 +532,6 @@
         <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Add"/>
         <Setter Property="Content" Value="&#xE109;"/>
-    </Style>
-    <Style x:Key="NoAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="NoAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="No"/>
-        <Setter Property="Content" Value="&#xE10A;"/>
-    </Style>
-    <Style x:Key="YesAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="YesAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Yes"/>
-        <Setter Property="Content" Value="&#xE10B;"/>
     </Style>
     <Style x:Key="MoreAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="MoreAppBarButton"/>

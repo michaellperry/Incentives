@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Incentives.Views.ActivityLineSmall"
+    x:Class="Incentives.Controls.ActivityLineSmall"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Incentives.Views"
@@ -17,13 +17,13 @@
             Width="23"
             Margin="3">
             <Ellipse
-                Fill="#FFF4F4F5"
-                Stroke="Black" />
+                Fill="{StaticResource PointIndicatorFillBrush}"
+                Stroke="{StaticResource PointIndicatorStrokeBrush}" />
             <TextBlock
                 Text="+5"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
-                Margin="0,0,0,0" />
+                Margin="0,0,0,0" Foreground="{StaticResource PointIndicatorForegroundBrush}" />
         </Grid>
         <TextBlock
             Grid.Column="2"

@@ -9,7 +9,7 @@
     d:DesignHeight="649"
     d:DesignWidth="1017">
 
-    <ScrollViewer>
+    <ScrollViewer ZoomMode="Disabled" HorizontalScrollMode="Disabled">
         <ItemsControl
             ItemsSource="{Binding Weeks}">
             <ItemsControl.ItemTemplate>

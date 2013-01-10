@@ -2,10 +2,26 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Incentives">
-	<SolidColorBrush x:Key="PointIndicatorFillBrush" Color="#FFF4F4F5"/>
-	<SolidColorBrush x:Key="PointIndicatorStrokeBrush" Color="Black"/>
-	<SolidColorBrush x:Key="PointIndicatorForegroundBrush" Color="Black"/>
+	<SolidColorBrush x:Key="PointIndicatorFillBrush" Color="#CFC24F"/>
+	<SolidColorBrush x:Key="PointIndicatorStrokeBrush" Color="#27240D"/>
+    <SolidColorBrush
+        x:Key="PointIndicatorForegroundBrush"
+        Color="#615A22"/>
 	<SolidColorBrush x:Key="SubtleTextBrush" Color="#FF575757"/>
 	<SolidColorBrush x:Key="LessLightBackgroundBrush" Color="#E0E0E0"/>
+	<SolidColorBrush x:Key="RadioButtonBackgroundThemeBrush" Color="#CC000000"/>
+	<SolidColorBrush x:Key="RadioButtonBorderThemeBrush" Color="#CC000000"/>
+	<SolidColorBrush x:Key="RadioButtonContentDisabledForegroundThemeBrush" Color="#66000000"/>
+	<SolidColorBrush x:Key="RadioButtonContentForegroundThemeBrush" Color="Black"/>
+	<SolidColorBrush x:Key="RadioButtonDisabledBackgroundThemeBrush" Color="#66000000"/>
+	<SolidColorBrush x:Key="RadioButtonDisabledBorderThemeBrush" Color="#66000000"/>
+	<SolidColorBrush x:Key="RadioButtonDisabledForegroundThemeBrush" Color="#66FFFFFF"/>
+	<SolidColorBrush x:Key="RadioButtonForegroundThemeBrush" Color="White"/>
+	<SolidColorBrush x:Key="RadioButtonPointerOverBackgroundThemeBrush" Color="#DE000000"/>
+	<SolidColorBrush x:Key="RadioButtonPointerOverBorderThemeBrush" Color="#DE000000"/>
+	<SolidColorBrush x:Key="RadioButtonPointerOverForegroundThemeBrush" Color="White"/>
+	<SolidColorBrush x:Key="RadioButtonPressedBackgroundThemeBrush" Color="Black"/>
+	<SolidColorBrush x:Key="RadioButtonPressedBorderThemeBrush" Color="Black"/>
+	<SolidColorBrush x:Key="RadioButtonPressedForegroundThemeBrush" Color="White"/>
     
 </ResourceDictionary>

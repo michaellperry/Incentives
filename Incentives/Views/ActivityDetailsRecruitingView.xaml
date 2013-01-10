@@ -1,0 +1,40 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Incentives.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Controls="using:Incentives.Controls"
+    x:Class="Incentives.Views.ActivityDetailsRecruitingView"
+    mc:Ignorable="d"
+    d:DesignHeight="648"
+    d:DesignWidth="350">
+    
+    <Grid>
+    	<Grid.RowDefinitions>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition Height="Auto"/>
+    		<RowDefinition/>
+    		<RowDefinition Height="Auto"/>
+    	</Grid.RowDefinitions>
+    	<TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Who was it?" FontSize="29.333" Margin="12"/>
+    	<TextBox Grid.Row="1" FontSize="29.333" Margin="12"/>
+    	<TextBlock Grid.Row="2" TextWrapping="Wrap" Text="What did you do?" FontSize="29.333" Margin="12"/>
+    	<Controls:ActivityRadioButton Grid.Row="3" PointValue="2" Label="Phone Screen"/>
+    	<Controls:ActivityRadioButton Grid.Row="4" Label="Interview" PointValue="4"/>
+    	<Controls:ActivityRadioButton Grid.Row="5" Label="Referral - No hire" PointValue="5"/>
+    	<Controls:ActivityRadioButton Grid.Row="6" Label="Referral - Hire" PointValue="50"/>
+    	<Controls:ActivityRadioButton Grid.Row="7" Label="Hire" PointValue="45"/>
+    	<StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Center">
+    		<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource OkAppBarButtonStyle}"/>
+    		<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource CancelAppBarButtonStyle}"/>
+    	</StackPanel>
+
+    </Grid>
+</UserControl>

@@ -8,7 +8,7 @@
     xmlns:vm="using:Incentives.ViewModels"
     x:Class="Incentives.ActivityPage"
     mc:Ignorable="d"
-    DataContext="{Binding Activity, Source={StaticResource Locator}}">
+    DataContext="{Binding Activity, Source={StaticResource Locator}}" Foreground="Black">
 
     <Grid
         Background="{StaticResource LightBackgroundBrush}">
@@ -28,8 +28,7 @@
         <Views:CalendarBodyView
             Grid.Row="1" />
         <Views:ActivityDetailsView
-            Grid.Column="1"
-            Grid.RowSpan="2" />
+            Grid.Column="1" Grid.Row="1" />
 
     </Grid>
 </Page>

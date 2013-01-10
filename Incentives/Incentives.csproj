@@ -110,6 +110,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\DependentExtensions.cs" />
+    <Compile Include="Controls\ActivityRadioButton.xaml.cs">
+      <DependentUpon>ActivityRadioButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HTTPConfigurationProvider.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -118,6 +121,12 @@
     <Compile Include="SynchronizationService.cs" />
     <Compile Include="ValueConverters\EvenOddValueConverter.cs" />
     <Compile Include="ViewModels\ActivityViewModel.cs" />
+    <Compile Include="Views\ActivityDetailsRecruitingView.xaml.cs">
+      <DependentUpon>ActivityDetailsRecruitingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ActivityDetailsUserGroupsView.xaml.cs">
+      <DependentUpon>ActivityDetailsUserGroupsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CalendarDayView.xaml.cs">
       <DependentUpon>CalendarDayView.xaml</DependentUpon>
     </Compile>
@@ -133,10 +142,10 @@
     <Compile Include="Views\ActivityFeedView.xaml.cs">
       <DependentUpon>ActivityFeedView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ActivityLineLarge.xaml.cs">
+    <Compile Include="Controls\ActivityLineLarge.xaml.cs">
       <DependentUpon>ActivityLineLarge.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ActivityLineSmall.xaml.cs">
+    <Compile Include="Controls\ActivityLineSmall.xaml.cs">
       <DependentUpon>ActivityLineSmall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CalendarBodyView.xaml.cs">
@@ -154,10 +163,10 @@
     <Compile Include="Views\LeaderTickerView.xaml.cs">
       <DependentUpon>LeaderTickerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProfileBadgeLarge.xaml.cs">
+    <Compile Include="Controls\ProfileBadgeLarge.xaml.cs">
       <DependentUpon>ProfileBadgeLarge.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProfileBadgeSmall.xaml.cs">
+    <Compile Include="Controls\ProfileBadgeSmall.xaml.cs">
       <DependentUpon>ProfileBadgeSmall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProfileView.xaml.cs">
@@ -197,9 +206,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\ActivityRadioButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ActivityDetailsRecruitingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ActivityDetailsUserGroupsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CalendarDayView.xaml">
       <SubType>Designer</SubType>
@@ -213,11 +234,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ActivityLineLarge.xaml">
+    <Page Include="Controls\ActivityLineLarge.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ActivityLineSmall.xaml">
+    <Page Include="Controls\ActivityLineSmall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -241,11 +262,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ProfileBadgeLarge.xaml">
+    <Page Include="Controls\ProfileBadgeLarge.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProfileBadgeSmall.xaml">
+    <Page Include="Controls\ProfileBadgeSmall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -289,6 +310,7 @@
       <Name>Incentives.Model</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>

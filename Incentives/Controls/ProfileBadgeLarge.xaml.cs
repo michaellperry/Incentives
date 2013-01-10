@@ -14,11 +14,11 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Incentives.Views
+namespace Incentives.Controls
 {
-    public sealed partial class ActivityLineLarge : UserControl
+    public sealed partial class ProfileBadgeLarge : UserControl
     {
-        public ActivityLineLarge()
+        public ProfileBadgeLarge()
         {
             this.InitializeComponent();
         }

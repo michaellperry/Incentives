@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Incentives"
-    xmlns:views="using:Incentives.Views"
+    xmlns:controls="using:Incentives.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -23,8 +23,8 @@
                 Width="Auto" />
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-        <views:ProfileBadgeLarge Margin="0,0,6,6" />
+        <controls:ProfileBadgeLarge Margin="0,0,6,6" />
 		<TextBlock FontSize="48" Grid.Column="1" Margin="6,22,0,0" Text="Michael P."/>
-        <views:ActivityLineLarge Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0" />
+        <controls:ActivityLineLarge Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0" />
 	</Grid>
 </UserControl>
