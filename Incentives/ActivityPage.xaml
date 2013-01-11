@@ -24,11 +24,16 @@
                 Width="175*" />
         </Grid.ColumnDefinitions>
 
+        <Grid.Transitions>
+            <TransitionCollection>
+                <EntranceThemeTransition />
+            </TransitionCollection>
+        </Grid.Transitions>
+
         <Views:CalendarHeaderView />
         <Views:CalendarBodyView
             Grid.Row="1" />
         <Views:ActivityDetailsView
             Grid.Column="1" Grid.Row="1" />
-
     </Grid>
 </Page>

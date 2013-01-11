@@ -21,9 +21,15 @@
     		<RowDefinition Height="Auto"/>
     		<RowDefinition Height="Auto"/>
     		<RowDefinition/>
-    		<RowDefinition Height="Auto"/>
-    	</Grid.RowDefinitions>
-    	<TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Who was it?" FontSize="29.333" Margin="12"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Who was it?" FontSize="29.333" Margin="12"/>
     	<TextBox Grid.Row="1" FontSize="29.333" Margin="12"/>
     	<TextBlock Grid.Row="2" TextWrapping="Wrap" Text="What did you do?" FontSize="29.333" Margin="12"/>
     	<Controls:ActivityRadioButton Grid.Row="3" PointValue="2" Label="Phone Screen"/>
@@ -31,10 +37,6 @@
     	<Controls:ActivityRadioButton Grid.Row="5" Label="Referral - No hire" PointValue="5"/>
     	<Controls:ActivityRadioButton Grid.Row="6" Label="Referral - Hire" PointValue="50"/>
     	<Controls:ActivityRadioButton Grid.Row="7" Label="Hire" PointValue="45"/>
-    	<StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Center">
-    		<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource OkAppBarButtonStyle}"/>
-    		<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource CancelAppBarButtonStyle}"/>
-    	</StackPanel>
 
     </Grid>
 </UserControl>

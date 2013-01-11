@@ -10,7 +10,25 @@
     d:DesignWidth="355">
     
     <Grid>
-    	<local:ActivityDetailsRecruitingView/>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+        <local:ActivityDetailsRecruitingView />
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center">
+            <Button
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Style="{StaticResource OkAppBarButtonStyle}" />
+            <Button
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Style="{StaticResource CancelAppBarButtonStyle}" />
+        </StackPanel>
 
     </Grid>
 </UserControl>
