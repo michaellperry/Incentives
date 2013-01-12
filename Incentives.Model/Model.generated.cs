@@ -17,11 +17,15 @@ digraph "Incentives.Model"
     Category -> Company
     Category__description -> Category
     Category__description -> Category__description [label="  *"]
+    Category__ordinal -> Category
+    Category__ordinal -> Category__ordinal [label="  *"]
     ActivityDefinition -> Category
     ActivityDefinition__description -> ActivityDefinition
     ActivityDefinition__description -> ActivityDefinition__description [label="  *"]
     ActivityDefinition__qualifier -> ActivityDefinition
     ActivityDefinition__qualifier -> ActivityDefinition__qualifier [label="  *"]
+    ActivityDefinition__ordinal -> ActivityDefinition
+    ActivityDefinition__ordinal -> ActivityDefinition__ordinal [label="  *"]
     ActivityReward -> ActivityDefinition
     ActivityReward -> Quarter
     ActivityReward__points -> ActivityReward
@@ -432,6 +436,13 @@ namespace Incentives.Model
         // Roles
 
         // Queries
+        public static Query MakeQueryCategories()
+		{
+			return new Query()
+				.JoinSuccessors(Category.RoleCompany)
+            ;
+		}
+        public static Query QueryCategories = MakeQueryCategories();
 
         // Predicates
 
@@ -441,6 +452,7 @@ namespace Incentives.Model
         private string _identifier;
 
         // Results
+        private Result<Category> _categories;
 
         // Business constructor
         public Company(
@@ -460,6 +472,7 @@ namespace Incentives.Model
         // Result initializer
         private void InitializeResults()
         {
+            _categories = new Result<Category>(this, QueryCategories);
         }
 
         // Predecessor access
@@ -471,6 +484,10 @@ namespace Incentives.Model
         }
 
         // Query result access
+        public Result<Category> Categories
+        {
+            get { return _categories; }
+        }
 
         // Mutable property access
 
@@ -601,7 +618,7 @@ namespace Incentives.Model
 				{
 					using (BinaryReader output = new BinaryReader(data))
 					{
-						newFact._unique = (Guid)_fieldSerializerByType[typeof(Guid)].ReadData(output);
+						newFact._identifier = (string)_fieldSerializerByType[typeof(string)].ReadData(output);
 					}
 				}
 
@@ -611,7 +628,7 @@ namespace Incentives.Model
 			public void WriteFactData(CorrespondenceFact obj, BinaryWriter output)
 			{
 				Category fact = (Category)obj;
-				_fieldSerializerByType[typeof(Guid)].WriteData(output, fact._unique);
+				_fieldSerializerByType[typeof(string)].WriteData(output, fact._identifier);
 			}
 		}
 
@@ -640,28 +657,44 @@ namespace Incentives.Model
             ;
 		}
         public static Query QueryDescription = MakeQueryDescription();
+        public static Query MakeQueryOrdinal()
+		{
+			return new Query()
+				.JoinSuccessors(Category__ordinal.RoleCategory, Condition.WhereIsEmpty(Category__ordinal.MakeQueryIsCurrent())
+				)
+            ;
+		}
+        public static Query QueryOrdinal = MakeQueryOrdinal();
+        public static Query MakeQueryActivities()
+		{
+			return new Query()
+				.JoinSuccessors(ActivityDefinition.RoleCategory)
+            ;
+		}
+        public static Query QueryActivities = MakeQueryActivities();
 
         // Predicates
 
         // Predecessors
         private PredecessorObj<Company> _company;
 
-        // Unique
-        private Guid _unique;
-
         // Fields
+        private string _identifier;
 
         // Results
         private Result<Category__description> _description;
+        private Result<Category__ordinal> _ordinal;
+        private Result<ActivityDefinition> _activities;
 
         // Business constructor
         public Category(
             Company company
+            ,string identifier
             )
         {
-            _unique = Guid.NewGuid();
             InitializeResults();
             _company = new PredecessorObj<Company>(this, RoleCompany, company);
+            _identifier = identifier;
         }
 
         // Hydration constructor
@@ -675,6 +708,8 @@ namespace Incentives.Model
         private void InitializeResults()
         {
             _description = new Result<Category__description>(this, QueryDescription);
+            _ordinal = new Result<Category__ordinal>(this, QueryOrdinal);
+            _activities = new Result<ActivityDefinition>(this, QueryActivities);
         }
 
         // Predecessor access
@@ -684,10 +719,16 @@ namespace Incentives.Model
         }
 
         // Field access
-		public Guid Unique { get { return _unique; } }
-
+        public string Identifier
+        {
+            get { return _identifier; }
+        }
 
         // Query result access
+        public Result<ActivityDefinition> Activities
+        {
+            get { return _activities; }
+        }
 
         // Mutable property access
         public TransientDisputable<Category__description, string> Description
@@ -701,6 +742,22 @@ namespace Incentives.Model
                     if (current.Count != 1 || !object.Equals(current[0].Value, value.Value))
                     {
                         await Community.AddFactAsync(new Category__description(this, _description, value.Value));
+                    }
+                };
+                setter();
+			}
+        }
+        public TransientDisputable<Category__ordinal, int> Ordinal
+        {
+            get { return _ordinal.AsTransientDisputable(fact => fact.Value); }
+			set
+			{
+                Action setter = async delegate()
+                {
+                    var current = (await _ordinal.EnsureAsync()).ToList();
+                    if (current.Count != 1 || !object.Equals(current[0].Value, value.Value))
+                    {
+                        await Community.AddFactAsync(new Category__ordinal(this, _ordinal, value.Value));
                     }
                 };
                 setter();
@@ -834,6 +891,131 @@ namespace Incentives.Model
 
     }
     
+    public partial class Category__ordinal : CorrespondenceFact
+    {
+		// Factory
+		internal class CorrespondenceFactFactory : ICorrespondenceFactFactory
+		{
+			private IDictionary<Type, IFieldSerializer> _fieldSerializerByType;
+
+			public CorrespondenceFactFactory(IDictionary<Type, IFieldSerializer> fieldSerializerByType)
+			{
+				_fieldSerializerByType = fieldSerializerByType;
+			}
+
+			public CorrespondenceFact CreateFact(FactMemento memento)
+			{
+				Category__ordinal newFact = new Category__ordinal(memento);
+
+				// Create a memory stream from the memento data.
+				using (MemoryStream data = new MemoryStream(memento.Data))
+				{
+					using (BinaryReader output = new BinaryReader(data))
+					{
+						newFact._value = (int)_fieldSerializerByType[typeof(int)].ReadData(output);
+					}
+				}
+
+				return newFact;
+			}
+
+			public void WriteFactData(CorrespondenceFact obj, BinaryWriter output)
+			{
+				Category__ordinal fact = (Category__ordinal)obj;
+				_fieldSerializerByType[typeof(int)].WriteData(output, fact._value);
+			}
+		}
+
+		// Type
+		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
+			"Incentives.Model.Category__ordinal", 1);
+
+		protected override CorrespondenceFactType GetCorrespondenceFactType()
+		{
+			return _correspondenceFactType;
+		}
+
+        // Roles
+        public static Role RoleCategory = new Role(new RoleMemento(
+			_correspondenceFactType,
+			"category",
+			new CorrespondenceFactType("Incentives.Model.Category", 1),
+			false));
+        public static Role RolePrior = new Role(new RoleMemento(
+			_correspondenceFactType,
+			"prior",
+			new CorrespondenceFactType("Incentives.Model.Category__ordinal", 1),
+			false));
+
+        // Queries
+        public static Query MakeQueryIsCurrent()
+		{
+			return new Query()
+				.JoinSuccessors(Category__ordinal.RolePrior)
+            ;
+		}
+        public static Query QueryIsCurrent = MakeQueryIsCurrent();
+
+        // Predicates
+        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+
+        // Predecessors
+        private PredecessorObj<Category> _category;
+        private PredecessorList<Category__ordinal> _prior;
+
+        // Fields
+        private int _value;
+
+        // Results
+
+        // Business constructor
+        public Category__ordinal(
+            Category category
+            ,IEnumerable<Category__ordinal> prior
+            ,int value
+            )
+        {
+            InitializeResults();
+            _category = new PredecessorObj<Category>(this, RoleCategory, category);
+            _prior = new PredecessorList<Category__ordinal>(this, RolePrior, prior);
+            _value = value;
+        }
+
+        // Hydration constructor
+        private Category__ordinal(FactMemento memento)
+        {
+            InitializeResults();
+            _category = new PredecessorObj<Category>(this, RoleCategory, memento);
+            _prior = new PredecessorList<Category__ordinal>(this, RolePrior, memento);
+        }
+
+        // Result initializer
+        private void InitializeResults()
+        {
+        }
+
+        // Predecessor access
+        public Category Category
+        {
+            get { return _category.Fact; }
+        }
+        public IEnumerable<Category__ordinal> Prior
+        {
+            get { return _prior; }
+        }
+     
+        // Field access
+        public int Value
+        {
+            get { return _value; }
+        }
+
+        // Query result access
+
+        // Mutable property access
+
+    }
+    
     public partial class ActivityDefinition : CorrespondenceFact
     {
 		// Factory
@@ -855,7 +1037,7 @@ namespace Incentives.Model
 				{
 					using (BinaryReader output = new BinaryReader(data))
 					{
-						newFact._unique = (Guid)_fieldSerializerByType[typeof(Guid)].ReadData(output);
+						newFact._identifier = (string)_fieldSerializerByType[typeof(string)].ReadData(output);
 					}
 				}
 
@@ -865,7 +1047,7 @@ namespace Incentives.Model
 			public void WriteFactData(CorrespondenceFact obj, BinaryWriter output)
 			{
 				ActivityDefinition fact = (ActivityDefinition)obj;
-				_fieldSerializerByType[typeof(Guid)].WriteData(output, fact._unique);
+				_fieldSerializerByType[typeof(string)].WriteData(output, fact._identifier);
 			}
 		}
 
@@ -902,29 +1084,37 @@ namespace Incentives.Model
             ;
 		}
         public static Query QueryQualifier = MakeQueryQualifier();
+        public static Query MakeQueryOrdinal()
+		{
+			return new Query()
+				.JoinSuccessors(ActivityDefinition__ordinal.RoleActivityDefinition, Condition.WhereIsEmpty(ActivityDefinition__ordinal.MakeQueryIsCurrent())
+				)
+            ;
+		}
+        public static Query QueryOrdinal = MakeQueryOrdinal();
 
         // Predicates
 
         // Predecessors
         private PredecessorObj<Category> _category;
 
-        // Unique
-        private Guid _unique;
-
         // Fields
+        private string _identifier;
 
         // Results
         private Result<ActivityDefinition__description> _description;
         private Result<ActivityDefinition__qualifier> _qualifier;
+        private Result<ActivityDefinition__ordinal> _ordinal;
 
         // Business constructor
         public ActivityDefinition(
             Category category
+            ,string identifier
             )
         {
-            _unique = Guid.NewGuid();
             InitializeResults();
             _category = new PredecessorObj<Category>(this, RoleCategory, category);
+            _identifier = identifier;
         }
 
         // Hydration constructor
@@ -939,6 +1129,7 @@ namespace Incentives.Model
         {
             _description = new Result<ActivityDefinition__description>(this, QueryDescription);
             _qualifier = new Result<ActivityDefinition__qualifier>(this, QueryQualifier);
+            _ordinal = new Result<ActivityDefinition__ordinal>(this, QueryOrdinal);
         }
 
         // Predecessor access
@@ -948,8 +1139,10 @@ namespace Incentives.Model
         }
 
         // Field access
-		public Guid Unique { get { return _unique; } }
-
+        public string Identifier
+        {
+            get { return _identifier; }
+        }
 
         // Query result access
 
@@ -981,6 +1174,22 @@ namespace Incentives.Model
                     if (current.Count != 1 || !object.Equals(current[0].Value, value.Value))
                     {
                         await Community.AddFactAsync(new ActivityDefinition__qualifier(this, _qualifier, value.Value));
+                    }
+                };
+                setter();
+			}
+        }
+        public TransientDisputable<ActivityDefinition__ordinal, int> Ordinal
+        {
+            get { return _ordinal.AsTransientDisputable(fact => fact.Value); }
+			set
+			{
+                Action setter = async delegate()
+                {
+                    var current = (await _ordinal.EnsureAsync()).ToList();
+                    if (current.Count != 1 || !object.Equals(current[0].Value, value.Value))
+                    {
+                        await Community.AddFactAsync(new ActivityDefinition__ordinal(this, _ordinal, value.Value));
                     }
                 };
                 setter();
@@ -1229,6 +1438,131 @@ namespace Incentives.Model
      
         // Field access
         public string Value
+        {
+            get { return _value; }
+        }
+
+        // Query result access
+
+        // Mutable property access
+
+    }
+    
+    public partial class ActivityDefinition__ordinal : CorrespondenceFact
+    {
+		// Factory
+		internal class CorrespondenceFactFactory : ICorrespondenceFactFactory
+		{
+			private IDictionary<Type, IFieldSerializer> _fieldSerializerByType;
+
+			public CorrespondenceFactFactory(IDictionary<Type, IFieldSerializer> fieldSerializerByType)
+			{
+				_fieldSerializerByType = fieldSerializerByType;
+			}
+
+			public CorrespondenceFact CreateFact(FactMemento memento)
+			{
+				ActivityDefinition__ordinal newFact = new ActivityDefinition__ordinal(memento);
+
+				// Create a memory stream from the memento data.
+				using (MemoryStream data = new MemoryStream(memento.Data))
+				{
+					using (BinaryReader output = new BinaryReader(data))
+					{
+						newFact._value = (int)_fieldSerializerByType[typeof(int)].ReadData(output);
+					}
+				}
+
+				return newFact;
+			}
+
+			public void WriteFactData(CorrespondenceFact obj, BinaryWriter output)
+			{
+				ActivityDefinition__ordinal fact = (ActivityDefinition__ordinal)obj;
+				_fieldSerializerByType[typeof(int)].WriteData(output, fact._value);
+			}
+		}
+
+		// Type
+		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
+			"Incentives.Model.ActivityDefinition__ordinal", 1);
+
+		protected override CorrespondenceFactType GetCorrespondenceFactType()
+		{
+			return _correspondenceFactType;
+		}
+
+        // Roles
+        public static Role RoleActivityDefinition = new Role(new RoleMemento(
+			_correspondenceFactType,
+			"activityDefinition",
+			new CorrespondenceFactType("Incentives.Model.ActivityDefinition", 1),
+			false));
+        public static Role RolePrior = new Role(new RoleMemento(
+			_correspondenceFactType,
+			"prior",
+			new CorrespondenceFactType("Incentives.Model.ActivityDefinition__ordinal", 1),
+			false));
+
+        // Queries
+        public static Query MakeQueryIsCurrent()
+		{
+			return new Query()
+				.JoinSuccessors(ActivityDefinition__ordinal.RolePrior)
+            ;
+		}
+        public static Query QueryIsCurrent = MakeQueryIsCurrent();
+
+        // Predicates
+        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+
+        // Predecessors
+        private PredecessorObj<ActivityDefinition> _activityDefinition;
+        private PredecessorList<ActivityDefinition__ordinal> _prior;
+
+        // Fields
+        private int _value;
+
+        // Results
+
+        // Business constructor
+        public ActivityDefinition__ordinal(
+            ActivityDefinition activityDefinition
+            ,IEnumerable<ActivityDefinition__ordinal> prior
+            ,int value
+            )
+        {
+            InitializeResults();
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, activityDefinition);
+            _prior = new PredecessorList<ActivityDefinition__ordinal>(this, RolePrior, prior);
+            _value = value;
+        }
+
+        // Hydration constructor
+        private ActivityDefinition__ordinal(FactMemento memento)
+        {
+            InitializeResults();
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, memento);
+            _prior = new PredecessorList<ActivityDefinition__ordinal>(this, RolePrior, memento);
+        }
+
+        // Result initializer
+        private void InitializeResults()
+        {
+        }
+
+        // Predecessor access
+        public ActivityDefinition ActivityDefinition
+        {
+            get { return _activityDefinition.Fact; }
+        }
+        public IEnumerable<ActivityDefinition__ordinal> Prior
+        {
+            get { return _prior; }
+        }
+     
+        // Field access
+        public int Value
         {
             get { return _value; }
         }
@@ -2055,6 +2389,9 @@ namespace Incentives.Model
 				Company._correspondenceFactType,
 				new Company.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Company._correspondenceFactType }));
+			community.AddQuery(
+				Company._correspondenceFactType,
+				Company.QueryCategories.QueryDefinition);
 			community.AddType(
 				Quarter._correspondenceFactType,
 				new Quarter.CorrespondenceFactFactory(fieldSerializerByType),
@@ -2066,6 +2403,12 @@ namespace Incentives.Model
 			community.AddQuery(
 				Category._correspondenceFactType,
 				Category.QueryDescription.QueryDefinition);
+			community.AddQuery(
+				Category._correspondenceFactType,
+				Category.QueryOrdinal.QueryDefinition);
+			community.AddQuery(
+				Category._correspondenceFactType,
+				Category.QueryActivities.QueryDefinition);
 			community.AddType(
 				Category__description._correspondenceFactType,
 				new Category__description.CorrespondenceFactFactory(fieldSerializerByType),
@@ -2073,6 +2416,13 @@ namespace Incentives.Model
 			community.AddQuery(
 				Category__description._correspondenceFactType,
 				Category__description.QueryIsCurrent.QueryDefinition);
+			community.AddType(
+				Category__ordinal._correspondenceFactType,
+				new Category__ordinal.CorrespondenceFactFactory(fieldSerializerByType),
+				new FactMetadata(new List<CorrespondenceFactType> { Category__ordinal._correspondenceFactType }));
+			community.AddQuery(
+				Category__ordinal._correspondenceFactType,
+				Category__ordinal.QueryIsCurrent.QueryDefinition);
 			community.AddType(
 				ActivityDefinition._correspondenceFactType,
 				new ActivityDefinition.CorrespondenceFactFactory(fieldSerializerByType),
@@ -2083,6 +2433,9 @@ namespace Incentives.Model
 			community.AddQuery(
 				ActivityDefinition._correspondenceFactType,
 				ActivityDefinition.QueryQualifier.QueryDefinition);
+			community.AddQuery(
+				ActivityDefinition._correspondenceFactType,
+				ActivityDefinition.QueryOrdinal.QueryDefinition);
 			community.AddType(
 				ActivityDefinition__description._correspondenceFactType,
 				new ActivityDefinition__description.CorrespondenceFactFactory(fieldSerializerByType),
@@ -2097,6 +2450,13 @@ namespace Incentives.Model
 			community.AddQuery(
 				ActivityDefinition__qualifier._correspondenceFactType,
 				ActivityDefinition__qualifier.QueryIsCurrent.QueryDefinition);
+			community.AddType(
+				ActivityDefinition__ordinal._correspondenceFactType,
+				new ActivityDefinition__ordinal.CorrespondenceFactFactory(fieldSerializerByType),
+				new FactMetadata(new List<CorrespondenceFactType> { ActivityDefinition__ordinal._correspondenceFactType }));
+			community.AddQuery(
+				ActivityDefinition__ordinal._correspondenceFactType,
+				ActivityDefinition__ordinal.QueryIsCurrent.QueryDefinition);
 			community.AddType(
 				ActivityReward._correspondenceFactType,
 				new ActivityReward.CorrespondenceFactFactory(fieldSerializerByType),

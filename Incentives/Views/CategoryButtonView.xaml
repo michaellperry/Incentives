@@ -185,8 +185,13 @@
         ItemsSource="{Binding Macros}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <WrapGrid
-                    Orientation="Horizontal" />
+                <WrapGrid Orientation="Horizontal">
+                    <WrapGrid.ChildrenTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                        </TransitionCollection>
+                    </WrapGrid.ChildrenTransitions>
+                </WrapGrid>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>

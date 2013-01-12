@@ -27,25 +27,25 @@ namespace Incentives.UnitTest
             _profile = await _community.AddFactAsync(new Profile());
             _profile.Name = "Michael Perry";
 
-            var company = await _community.AddFactAsync(new Company("improvingenterprises"));
+            var company = await _community.AddFactAsync(new Company("improvingEnterprises"));
             var quarter = await _community.AddFactAsync(new Quarter(company, new DateTime(2012, 7, 1)));
 
-            var industryContributionLeadership = await _community.AddFactAsync(new Category(company));
+            var industryContributionLeadership = await _community.AddFactAsync(new Category(company, "industryContributionLeadership"));
             industryContributionLeadership.Description = "Industry Contribution/Leadership";
-            var leadUserGroup = await _community.AddFactAsync(new ActivityDefinition(industryContributionLeadership));
+            var leadUserGroup = await _community.AddFactAsync(new ActivityDefinition(industryContributionLeadership, "leadUserGroup"));
             leadUserGroup.Description = "Lead a user group";
             leadUserGroup.Qualifier = "mtg";
             var leadUserGroupReward = await _community.AddFactAsync(new ActivityReward(leadUserGroup, quarter));
             leadUserGroupReward.Points = 3;
-            var presentationUserGroup = await _community.AddFactAsync(new ActivityDefinition(industryContributionLeadership));
+            var presentationUserGroup = await _community.AddFactAsync(new ActivityDefinition(industryContributionLeadership, "presentationUserGroup"));
             presentationUserGroup.Description = "Presentation - user group";
             presentationUserGroup.Qualifier = "presentation";
             var presentationUserGroupReward = await _community.AddFactAsync(new ActivityReward(presentationUserGroup, quarter));
             presentationUserGroupReward.Points = 10;
 
-            var certificationRecognition = await _community.AddFactAsync(new Category(company));
+            var certificationRecognition = await _community.AddFactAsync(new Category(company, "certificationRecognition"));
             certificationRecognition.Description = "Certification/Recognition";
-            var mvp = await _community.AddFactAsync(new ActivityDefinition(certificationRecognition));
+            var mvp = await _community.AddFactAsync(new ActivityDefinition(certificationRecognition, "microsoftMvp"));
             mvp.Description = "Microsoft MVP";
             var mvpReward = await _community.AddFactAsync(new ActivityReward(mvp, quarter));
             mvpReward.Points = 50;

@@ -10,6 +10,11 @@
     mc:Ignorable="d"
     DataContext="{Binding Main, Source={StaticResource Locator}}"
     Foreground="Black">
+    <Page.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
     <Grid
         Background="#FFE0E0E0">
         <Grid.RowDefinitions>

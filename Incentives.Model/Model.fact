@@ -21,6 +21,11 @@ query:
 fact Company {
 key:
 	string identifier;
+
+query:
+	Category* categories {
+		Category c : c.company = this
+	}
 }
 
 fact Quarter {
@@ -31,21 +36,28 @@ key:
 
 fact Category {
 key:
-	unique;
 	Company company;
+	string identifier;
 
 mutable:
 	string description;
+	int ordinal;
+
+query:
+	ActivityDefinition* activities {
+		ActivityDefinition a : a.category = this
+	}
 }
 
 fact ActivityDefinition {
 key:
-	unique;
 	Category category;
+	string identifier;
 
 mutable:
 	string description;
 	string qualifier;
+	int ordinal;
 }
 
 fact ActivityReward {
