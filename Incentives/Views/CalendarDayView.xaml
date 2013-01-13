@@ -11,10 +11,14 @@
     d:DesignWidth="160">
     
 	<UserControl.Resources>
+		<ValueConverters:VisibleWhenTrueConverter x:Key="VisibleWhenTrueConverter"/>
 		<ValueConverters:EvenOddValueConverter x:Key="EvenOddValueConverter"/>
 	</UserControl.Resources>
     
-    <Grid Background="{Binding Month, Converter={StaticResource EvenOddValueConverter}}">
+    <Grid Background="{Binding Month, Converter={StaticResource EvenOddValueConverter}}" Tapped="Grid_Tapped"
+        IsDoubleTapEnabled="False"
+        IsHoldingEnabled="False"
+        IsRightTapEnabled="False">
         <TextBlock
             Text="{Binding Day}"
             FontSize="18.667"
@@ -22,5 +26,6 @@
             VerticalAlignment="Top"
             Foreground="{StaticResource SubtleTextBrush}"
             Margin="6,6,0,6" />
+        <Rectangle Fill="{StaticResource SelectedDateBrush}" Stroke="Black" Visibility="{Binding IsSelected, Converter={StaticResource VisibleWhenTrueConverter}}"/>
     </Grid>
 </UserControl>

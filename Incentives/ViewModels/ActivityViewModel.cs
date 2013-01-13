@@ -34,7 +34,7 @@ namespace Incentives.ViewModels
                 DateTime quarterStart = _quarter.StartDate.AddDays(-(int)_quarter.StartDate.DayOfWeek);
                 for (int week = 0; week < 14; ++week)
                 {
-                    yield return new CalendarWeekViewModel(quarterStart.AddDays(7.0 * (double)week));
+                    yield return new CalendarWeekViewModel(quarterStart.AddDays(7.0 * (double)week), _activitySelection);
                 }
             }
         }

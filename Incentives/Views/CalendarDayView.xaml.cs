@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+﻿using Incentives.ViewModels;
+using UpdateControls;
+using UpdateControls.XAML;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -21,6 +13,19 @@ namespace Incentives.Views
         public CalendarDayView()
         {
             this.InitializeComponent();
+        }
+
+        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var scheduler = UpdateScheduler.Begin();
+
+            var viewModel = ForView.Unwrap<CalendarDayViewModel>(DataContext);
+
+            if (viewModel != null)
+                viewModel.IsSelected = true;
+
+            foreach (var update in scheduler.End())
+                update.UpdateNow();
         }
     }
 }

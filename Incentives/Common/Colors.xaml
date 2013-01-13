@@ -23,5 +23,6 @@
 	<SolidColorBrush x:Key="RadioButtonPressedBackgroundThemeBrush" Color="Black"/>
 	<SolidColorBrush x:Key="RadioButtonPressedBorderThemeBrush" Color="Black"/>
 	<SolidColorBrush x:Key="RadioButtonPressedForegroundThemeBrush" Color="White"/>
+	<SolidColorBrush x:Key="SelectedDateBrush" Color="#3369FB3E"/>
     
 </ResourceDictionary>
