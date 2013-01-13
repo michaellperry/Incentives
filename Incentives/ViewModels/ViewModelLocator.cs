@@ -9,7 +9,7 @@ namespace Incentives.ViewModels
     public class ViewModelLocator : ViewModelLocatorBase
     {
         private readonly SynchronizationService _synchronizationService = new SynchronizationService();
-        private readonly CategorySelection _categorySelection = new CategorySelection();
+        private readonly ActivitySelection _activitySelection = new ActivitySelection();
 
         public ViewModelLocator()
         {
@@ -29,7 +29,7 @@ namespace Incentives.ViewModels
                         _synchronizationService.Community,
                         _synchronizationService.Individual,
                         _synchronizationService.Company,
-                        _categorySelection));
+                        _activitySelection));
             }
         }
 
@@ -45,7 +45,7 @@ namespace Incentives.ViewModels
                         _synchronizationService.Community,
                         _synchronizationService.Individual,
                         _synchronizationService.Quarter,
-                        _categorySelection));
+                        _activitySelection));
             }
         }
     }

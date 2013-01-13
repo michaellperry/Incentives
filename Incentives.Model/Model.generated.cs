@@ -11,6 +11,8 @@ using System.IO;
 digraph "Incentives.Model"
 {
     rankdir=BT
+    IndividualProfile -> Individual
+    IndividualProfile -> Profile
     Profile__name -> Profile
     Profile__name -> Profile__name [label="  *"]
     Quarter -> Company
@@ -90,6 +92,14 @@ namespace Incentives.Model
         // Roles
 
         // Queries
+        public static Query MakeQueryProfiles()
+		{
+			return new Query()
+				.JoinSuccessors(IndividualProfile.RoleIndividual)
+				.JoinPredecessors(IndividualProfile.RoleProfile)
+            ;
+		}
+        public static Query QueryProfiles = MakeQueryProfiles();
 
         // Predicates
 
@@ -99,6 +109,7 @@ namespace Incentives.Model
         private string _anonymousId;
 
         // Results
+        private Result<Profile> _profiles;
 
         // Business constructor
         public Individual(
@@ -118,6 +129,7 @@ namespace Incentives.Model
         // Result initializer
         private void InitializeResults()
         {
+            _profiles = new Result<Profile>(this, QueryProfiles);
         }
 
         // Predecessor access
@@ -127,6 +139,118 @@ namespace Incentives.Model
         {
             get { return _anonymousId; }
         }
+
+        // Query result access
+        public Result<Profile> Profiles
+        {
+            get { return _profiles; }
+        }
+
+        // Mutable property access
+
+    }
+    
+    public partial class IndividualProfile : CorrespondenceFact
+    {
+		// Factory
+		internal class CorrespondenceFactFactory : ICorrespondenceFactFactory
+		{
+			private IDictionary<Type, IFieldSerializer> _fieldSerializerByType;
+
+			public CorrespondenceFactFactory(IDictionary<Type, IFieldSerializer> fieldSerializerByType)
+			{
+				_fieldSerializerByType = fieldSerializerByType;
+			}
+
+			public CorrespondenceFact CreateFact(FactMemento memento)
+			{
+				IndividualProfile newFact = new IndividualProfile(memento);
+
+				// Create a memory stream from the memento data.
+				using (MemoryStream data = new MemoryStream(memento.Data))
+				{
+					using (BinaryReader output = new BinaryReader(data))
+					{
+					}
+				}
+
+				return newFact;
+			}
+
+			public void WriteFactData(CorrespondenceFact obj, BinaryWriter output)
+			{
+				IndividualProfile fact = (IndividualProfile)obj;
+			}
+		}
+
+		// Type
+		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
+			"Incentives.Model.IndividualProfile", 1);
+
+		protected override CorrespondenceFactType GetCorrespondenceFactType()
+		{
+			return _correspondenceFactType;
+		}
+
+        // Roles
+        public static Role RoleIndividual = new Role(new RoleMemento(
+			_correspondenceFactType,
+			"individual",
+			new CorrespondenceFactType("Incentives.Model.Individual", 1),
+			false));
+        public static Role RoleProfile = new Role(new RoleMemento(
+			_correspondenceFactType,
+			"profile",
+			new CorrespondenceFactType("Incentives.Model.Profile", 1),
+			false));
+
+        // Queries
+
+        // Predicates
+
+        // Predecessors
+        private PredecessorObj<Individual> _individual;
+        private PredecessorObj<Profile> _profile;
+
+        // Fields
+
+        // Results
+
+        // Business constructor
+        public IndividualProfile(
+            Individual individual
+            ,Profile profile
+            )
+        {
+            InitializeResults();
+            _individual = new PredecessorObj<Individual>(this, RoleIndividual, individual);
+            _profile = new PredecessorObj<Profile>(this, RoleProfile, profile);
+        }
+
+        // Hydration constructor
+        private IndividualProfile(FactMemento memento)
+        {
+            InitializeResults();
+            _individual = new PredecessorObj<Individual>(this, RoleIndividual, memento);
+            _profile = new PredecessorObj<Profile>(this, RoleProfile, memento);
+        }
+
+        // Result initializer
+        private void InitializeResults()
+        {
+        }
+
+        // Predecessor access
+        public Individual Individual
+        {
+            get { return _individual.Fact; }
+        }
+        public Profile Profile
+        {
+            get { return _profile.Fact; }
+        }
+
+        // Field access
 
         // Query result access
 
@@ -2381,6 +2505,13 @@ namespace Incentives.Model
 				Individual._correspondenceFactType,
 				new Individual.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Individual._correspondenceFactType }));
+			community.AddQuery(
+				Individual._correspondenceFactType,
+				Individual.QueryProfiles.QueryDefinition);
+			community.AddType(
+				IndividualProfile._correspondenceFactType,
+				new IndividualProfile.CorrespondenceFactFactory(fieldSerializerByType),
+				new FactMetadata(new List<CorrespondenceFactType> { IndividualProfile._correspondenceFactType }));
 			community.AddType(
 				Profile._correspondenceFactType,
 				new Profile.CorrespondenceFactFactory(fieldSerializerByType),

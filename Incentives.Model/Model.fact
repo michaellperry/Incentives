@@ -3,6 +3,18 @@ namespace Incentives.Model;
 fact Individual {
 key:
     string anonymousId;
+
+query:
+	Profile* profiles {
+		IndividualProfile ip : ip.individual = this
+		Profile p : p = ip.profile
+	}
+}
+
+fact IndividualProfile {
+key:
+	Individual individual;
+	Profile profile;
 }
 
 fact Profile {

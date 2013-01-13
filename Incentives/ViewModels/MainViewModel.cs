@@ -14,19 +14,24 @@ namespace Incentives.ViewModels
         private readonly Community _community;
         private readonly Individual _individual;
         private readonly Company _company;
-        private readonly CategorySelection _categorySelection;
+        private readonly ActivitySelection _activitySelection;
         
-        public MainViewModel(Community community, Individual individual, Company company, CategorySelection categorySelection)
+        public MainViewModel(Community community, Individual individual, Company company, ActivitySelection activitySelection)
         {
             _community = community;
             _individual = individual;
             _company = company;
-            _categorySelection = categorySelection;
+            _activitySelection = activitySelection;
         }
 
         public bool Synchronizing
         {
             get { return _community.Synchronizing; }
+        }
+
+        public void Clear()
+        {
+            _activitySelection.Clear();
         }
 
         public string LastException
@@ -48,7 +53,7 @@ namespace Incentives.ViewModels
                     orderby category.Ordinal.Value
                     select new MacroViewModel(
                         category,
-                        _categorySelection);
+                        _activitySelection);
             }
         }
     }

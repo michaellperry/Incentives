@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Incentives.ViewModels;
+using UpdateControls.XAML;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -33,6 +35,10 @@ namespace Incentives
         /// property is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            MainViewModel viewModel = ForView.Unwrap<MainViewModel>(DataContext);
+
+            if (viewModel != null)
+                viewModel.Clear();
         }
     }
 }

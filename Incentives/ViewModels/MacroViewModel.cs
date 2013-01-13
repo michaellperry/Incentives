@@ -14,12 +14,12 @@ namespace Incentives.ViewModels
     public class MacroViewModel
     {
         private readonly Category _category;
-        private readonly CategorySelection _categorySelection;
+        private readonly ActivitySelection _activitySelection;
         
-        public MacroViewModel(Category category, CategorySelection categorySelection)
+        public MacroViewModel(Category category, ActivitySelection activitySelection)
         {
             _category = category;
-            _categorySelection = categorySelection;
+            _activitySelection = activitySelection;
         }
 
         public string Label
@@ -39,7 +39,7 @@ namespace Incentives.ViewModels
                 return MakeCommand
                     .Do(() =>
                     {
-                        _categorySelection.Category = _category;
+                        _activitySelection.Category = _category;
 
                         // TODO: This is dirty.
                         var frame = Window.Current.Content as Frame;

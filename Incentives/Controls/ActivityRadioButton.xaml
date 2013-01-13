@@ -116,7 +116,7 @@
             Content="Activity"
             FontSize="18.667"
             Margin="12"
-            Padding="0,1,0,0" Foreground="Black" Style="{StaticResource ActivityRadioButtonStyle}" />
+            Padding="0,1,0,0" Foreground="Black" Style="{StaticResource ActivityRadioButtonStyle}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
         <Ellipse Fill="{StaticResource PointIndicatorFillBrush}" HorizontalAlignment="Right" Height="25" Margin="0,16,10,0" Stroke="{StaticResource PointIndicatorStrokeBrush}" VerticalAlignment="Top" Width="25"/>
         <TextBlock x:Name="PointIndicator" HorizontalAlignment="Right" TextWrapping="Wrap" Text="+1" VerticalAlignment="Top" Margin="0,22,10,0" Foreground="{StaticResource PointIndicatorForegroundBrush}" Width="25" TextAlignment="Center"/>
     </Grid>
