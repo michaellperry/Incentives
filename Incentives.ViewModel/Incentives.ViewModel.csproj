@@ -104,6 +104,7 @@
     <Compile Include="ActivityReportViewModel.cs" />
     <Compile Include="ActivityViewModel.cs" />
     <Compile Include="CategoryGenerator.cs" />
+    <Compile Include="CategorySelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

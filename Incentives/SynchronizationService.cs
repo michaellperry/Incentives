@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Incentives.Model;
+using Incentives.ViewModel;
 using UpdateControls.Correspondence;
 using UpdateControls.Correspondence.BinaryHTTPClient;
 using UpdateControls.Correspondence.FileStream;
@@ -22,56 +23,77 @@ namespace Incentives
 
         private Community _community;
         private Independent<Individual> _individual = new Independent<Individual>();
+        private Independent<Company> _company = new Independent<Company>();
+        private Independent<Quarter> _quarter = new Independent<Quarter>();
 
         public async void Initialize()
         {
-            var storage = new FileStreamStorageStrategy();
-            var http = new HTTPConfigurationProvider();
-            var communication = new BinaryHTTPAsynchronousCommunicationStrategy(http);
-
-            _community = new Community(storage);
-            _community.AddAsynchronousCommunicationStrategy(communication);
-            _community.Register<CorrespondenceModel>();
-            _community.Subscribe(() => _individual.Value);
-
-            // Synchronize periodically.
-            DispatcherTimer timer = new DispatcherTimer();
-            int timeoutSeconds = Math.Min(http.Configuration.TimeoutSeconds, 30);
-            timer.Interval = TimeSpan.FromSeconds(5 * timeoutSeconds);
-            timer.Tick += delegate(object sender, object e)
+            try
             {
-                Synchronize();
-            };
-            timer.Start();
+                var storage = new FileStreamStorageStrategy();
+                var http = new HTTPConfigurationProvider();
+                var communication = new BinaryHTTPAsynchronousCommunicationStrategy(http);
 
-            Individual individual = await _community.LoadFactAsync<Individual>(ThisIndividual);
-            if (individual == null)
-            {
-                string randomId = Punctuation.Replace(Guid.NewGuid().ToString(), String.Empty).ToLower();
-                individual = await _community.AddFactAsync(new Individual(randomId));
-                await _community.SetFactAsync(ThisIndividual, individual);
-            }
-            lock (this)
-            {
-                _individual.Value = individual;
-            }
-            http.Individual = individual;
+                _community = new Community(storage);
+                _community.AddAsynchronousCommunicationStrategy(communication);
+                _community.Register<CorrespondenceModel>();
+                _community.Subscribe(() => _individual.Value);
 
-            // Synchronize whenever the user has something to send.
-            _community.FactAdded += delegate
-            {
-                Synchronize();
-            };
-
-            // Synchronize when the network becomes available.
-            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += (sender, e) =>
-            {
-                if (NetworkInterface.GetIsNetworkAvailable())
+                // Synchronize periodically.
+                DispatcherTimer timer = new DispatcherTimer();
+                int timeoutSeconds = Math.Min(http.Configuration.TimeoutSeconds, 30);
+                timer.Interval = TimeSpan.FromSeconds(5 * timeoutSeconds);
+                timer.Tick += delegate(object sender, object e)
+                {
                     Synchronize();
-            };
+                };
+                timer.Start();
 
-            // And synchronize on startup or resume.
-            Synchronize();
+                var company = await _community.AddFactAsync(new Company("improvingEnterprises"));
+                var quarter = await _community.AddFactAsync(new Quarter(company, CurrentQuarter));
+
+                //var categoryGenerator = new CategoryGenerator(_community, company, quarter);
+                //await categoryGenerator.GenerateAsync();
+
+                lock (this)
+                {
+                    _company.Value = company;
+                    _quarter.Value = quarter;
+                }
+
+                Individual individual = await _community.LoadFactAsync<Individual>(ThisIndividual);
+                if (individual == null)
+                {
+                    string randomId = Punctuation.Replace(Guid.NewGuid().ToString(), String.Empty).ToLower();
+                    individual = await _community.AddFactAsync(new Individual(randomId));
+                    await _community.SetFactAsync(ThisIndividual, individual);
+                }
+                lock (this)
+                {
+                    _individual.Value = individual;
+                }
+                http.Individual = individual;
+
+                // Synchronize whenever the user has something to send.
+                _community.FactAdded += delegate
+                {
+                    Synchronize();
+                };
+
+                // Synchronize when the network becomes available.
+                System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += (sender, e) =>
+                {
+                    if (NetworkInterface.GetIsNetworkAvailable())
+                        Synchronize();
+                };
+
+                // And synchronize on startup or resume.
+                Synchronize();
+            }
+            catch (Exception x)
+            {
+                System.Diagnostics.Debug.WriteLine(x.Message);
+            }
         }
 
         public Community Community
@@ -90,10 +112,41 @@ namespace Incentives
             }
         }
 
+        public Company Company
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _company;
+                }
+            }
+        }
+
+        public Quarter Quarter
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _quarter;
+                }
+            }
+        }
+
         public void Synchronize()
         {
             _community.BeginSending();
             _community.BeginReceiving();
+        }
+
+        private DateTime CurrentQuarter
+        {
+            get
+            {
+                var now = DateTime.Now;
+                return new DateTime(now.Year, ((now.Month - 1) / 3) * 3 + 1, 1);
+            }
         }
     }
 }

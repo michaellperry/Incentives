@@ -19,9 +19,9 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition
-                Width="508*" />
+                Width="923*" />
             <ColumnDefinition
-                Width="175*" />
+                Width="443*" />
         </Grid.ColumnDefinitions>
 
         <Grid.Transitions>
@@ -34,6 +34,6 @@
         <Views:CalendarBodyView
             Grid.Row="1" />
         <Views:ActivityDetailsView
-            Grid.Column="1" Grid.Row="1" />
+            Grid.Column="1" Grid.RowSpan="2" />
     </Grid>
 </Page>

@@ -16,6 +16,7 @@ namespace Incentives.UnitTest
     {
         private Community _community;
         private Company _company;
+        private Quarter _quarter;
         private CategoryGenerator _categoryGenerator;
 
         [TestInitialize]
@@ -25,8 +26,9 @@ namespace Incentives.UnitTest
                 .Register<CorrespondenceModel>();
 
             _company = await _community.AddFactAsync(new Company("improvingEnterprises"));
-            _categoryGenerator = new CategoryGenerator(_community, _company);
-            await _categoryGenerator.Generate();
+            _quarter = await _community.AddFactAsync(new Quarter(_company, new DateTime(2013, 1, 1)));
+            _categoryGenerator = new CategoryGenerator(_community, _company, _quarter);
+            await _categoryGenerator.GenerateAsync();
         }
 
         [TestMethod]
@@ -41,7 +43,7 @@ namespace Incentives.UnitTest
         }
 
         [TestMethod]
-        public void GenerateActivityDefinitions()
+        public async Task GenerateActivityDefinitions()
         {
             IEnumerable<ActivityDefinition> definitions = _company.Categories
                 .OrderBy(c => c.Ordinal.Value)
@@ -50,9 +52,38 @@ namespace Incentives.UnitTest
                 .OrderBy(a => a.Ordinal.Value);
 
             Assert.AreEqual(9, definitions.Count());
-            Assert.AreEqual("qualifiedContact", definitions.First().Identifier);
-            Assert.AreEqual("Qualified Contact", definitions.First().Description.Value);
-            Assert.AreEqual("contact", definitions.First().Qualifier.Value);
+
+            ActivityDefinition activityDefinition = definitions.First();
+            Assert.AreEqual("qualifiedContact", activityDefinition.Identifier);
+            Assert.AreEqual("Qualified Contact", activityDefinition.Description.Value);
+            Assert.AreEqual("contact", activityDefinition.Qualifier.Value);
+
+            var activityReward = await _community.FindFactAsync(new ActivityReward(activityDefinition, _quarter));
+            Assert.AreEqual(1, activityReward.Points.Value);
+        }
+
+        [TestMethod]
+        public async Task IdentifyStarActivities()
+        {
+            var category = await _community.FindFactAsync(new Category(_company, "industryContributionLeadership"));
+            var activity = await _community.FindFactAsync(new ActivityDefinition(category, "openSourceDevelopment"));
+
+            Assert.AreEqual("point", activity.Qualifier.Value);
+
+            var activityReward = await _community.FindFactAsync(new ActivityReward(activity, _quarter));
+            Assert.AreEqual(1, activityReward.Points.Value);
+        }
+
+        [TestMethod]
+        public async Task IdentifyUnqualifiedActivities()
+        {
+            var category = await _community.FindFactAsync(new Category(_company, "certificationRecognition"));
+            var activity = await _community.FindFactAsync(new ActivityDefinition(category, "scmAgile"));
+
+            Assert.IsNull(activity.Qualifier.Value);
+
+            var activityReward = await _community.FindFactAsync(new ActivityReward(activity, _quarter));
+            Assert.AreEqual(10, activityReward.Points.Value);
         }
     }
 }

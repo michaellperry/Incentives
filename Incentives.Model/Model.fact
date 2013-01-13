@@ -32,6 +32,11 @@ fact Quarter {
 key:
 	Company company;
 	date startDate;
+
+query:
+	ActivityReward* rewards {
+		ActivityReward r : r.quarter = this
+	}
 }
 
 fact Category {

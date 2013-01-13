@@ -120,13 +120,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SynchronizationService.cs" />
     <Compile Include="ValueConverters\EvenOddValueConverter.cs" />
+    <Compile Include="ViewModels\ActivityOptionViewModel.cs" />
     <Compile Include="ViewModels\ActivityViewModel.cs" />
-    <Compile Include="Views\ActivityDetailsRecruitingView.xaml.cs">
-      <DependentUpon>ActivityDetailsRecruitingView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ActivityDetailsUserGroupsView.xaml.cs">
-      <DependentUpon>ActivityDetailsUserGroupsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\CalendarDayView.xaml.cs">
       <DependentUpon>CalendarDayView.xaml</DependentUpon>
     </Compile>
@@ -214,14 +209,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ActivityDetailsRecruitingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ActivityDetailsUserGroupsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\CalendarDayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -308,6 +295,10 @@
     <ProjectReference Include="..\Incentives.Model\Incentives.Model.csproj">
       <Project>{3021982e-dbad-4193-9d8f-979c854db32d}</Project>
       <Name>Incentives.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Incentives.ViewModel\Incentives.ViewModel.csproj">
+      <Project>{6c605771-bb0b-4058-9b87-5288ed9c054c}</Project>
+      <Name>Incentives.ViewModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

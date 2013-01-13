@@ -1,17 +1,18 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using Incentives.ViewModel;
 using UpdateControls.XAML;
 
 namespace Incentives.ViewModels
 {
     public class ViewModelLocator : ViewModelLocatorBase
     {
-        private readonly SynchronizationService _synchronizationService;
+        private readonly SynchronizationService _synchronizationService = new SynchronizationService();
+        private readonly CategorySelection _categorySelection = new CategorySelection();
 
         public ViewModelLocator()
         {
-            _synchronizationService = new SynchronizationService();
             if (!Windows.ApplicationModel.DesignMode.DesignModeEnabled)
                 _synchronizationService.Initialize();
         }
@@ -20,11 +21,15 @@ namespace Incentives.ViewModels
         {
             get
             {
-                return ViewModel(() => _synchronizationService.Individual == null
+                return ViewModel(() =>
+                    _synchronizationService.Individual == null ||
+                    _synchronizationService.Company == null
                     ? null :
                     new MainViewModel(
                         _synchronizationService.Community,
-                        _synchronizationService.Individual));
+                        _synchronizationService.Individual,
+                        _synchronizationService.Company,
+                        _categorySelection));
             }
         }
 
@@ -32,7 +37,15 @@ namespace Incentives.ViewModels
         {
             get
             {
-                return ViewModel(() => new ActivityViewModel());
+                return ViewModel(() =>
+                    _synchronizationService.Individual == null ||
+                    _synchronizationService.Company == null
+                    ? null :
+                    new ActivityViewModel(
+                        _synchronizationService.Community,
+                        _synchronizationService.Individual,
+                        _synchronizationService.Quarter,
+                        _categorySelection));
             }
         }
     }

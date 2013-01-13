@@ -545,6 +545,13 @@ namespace Incentives.Model
 			false));
 
         // Queries
+        public static Query MakeQueryRewards()
+		{
+			return new Query()
+				.JoinSuccessors(ActivityReward.RoleQuarter)
+            ;
+		}
+        public static Query QueryRewards = MakeQueryRewards();
 
         // Predicates
 
@@ -555,6 +562,7 @@ namespace Incentives.Model
         private DateTime _startDate;
 
         // Results
+        private Result<ActivityReward> _rewards;
 
         // Business constructor
         public Quarter(
@@ -577,6 +585,7 @@ namespace Incentives.Model
         // Result initializer
         private void InitializeResults()
         {
+            _rewards = new Result<ActivityReward>(this, QueryRewards);
         }
 
         // Predecessor access
@@ -592,6 +601,10 @@ namespace Incentives.Model
         }
 
         // Query result access
+        public Result<ActivityReward> Rewards
+        {
+            get { return _rewards; }
+        }
 
         // Mutable property access
 
@@ -2396,6 +2409,9 @@ namespace Incentives.Model
 				Quarter._correspondenceFactType,
 				new Quarter.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Quarter._correspondenceFactType }));
+			community.AddQuery(
+				Quarter._correspondenceFactType,
+				Quarter.QueryRewards.QueryDefinition);
 			community.AddType(
 				Category._correspondenceFactType,
 				new Category.CorrespondenceFactFactory(fieldSerializerByType),

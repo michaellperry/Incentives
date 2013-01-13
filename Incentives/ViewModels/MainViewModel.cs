@@ -5,18 +5,23 @@ using System.Windows.Input;
 using Incentives.Model;
 using UpdateControls.Correspondence;
 using UpdateControls.XAML;
+using Incentives.ViewModel;
 
 namespace Incentives.ViewModels
 {
     public class MainViewModel
     {
-        private Community _community;
-        private Individual _individual;
-
-        public MainViewModel(Community community, Individual individual)
+        private readonly Community _community;
+        private readonly Individual _individual;
+        private readonly Company _company;
+        private readonly CategorySelection _categorySelection;
+        
+        public MainViewModel(Community community, Individual individual, Company company, CategorySelection categorySelection)
         {
             _community = community;
             _individual = individual;
+            _company = company;
+            _categorySelection = categorySelection;
         }
 
         public bool Synchronizing
@@ -34,19 +39,16 @@ namespace Incentives.ViewModels
             }
         }
 
-        public IEnumerable<MacroViewModel> Macros
+        public IEnumerable<MacroViewModel> Categories
         {
             get
             {
-                return new MacroViewModel[]
-                {
-                    new MacroViewModel("Recruiting"),
-                    new MacroViewModel("User Groups"),
-                    new MacroViewModel("Networking"),
-                    new MacroViewModel("Blogging"),
-                    new MacroViewModel("Open Source"),
-                    new MacroViewModel("Other")
-                };
+                return
+                    from category in _company.Categories
+                    orderby category.Ordinal.Value
+                    select new MacroViewModel(
+                        category,
+                        _categorySelection);
             }
         }
     }
