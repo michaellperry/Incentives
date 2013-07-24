@@ -35,7 +35,7 @@ namespace Incentives
                 var communication = new BinaryHTTPAsynchronousCommunicationStrategy(http);
 
                 _community = new Community(storage);
-                _community.AddAsynchronousCommunicationStrategy(communication);
+                //_community.AddAsynchronousCommunicationStrategy(communication);
                 _community.Register<CorrespondenceModel>();
                 _community.Subscribe(() => _individual.Value);
 
@@ -52,8 +52,8 @@ namespace Incentives
                 var company = await _community.AddFactAsync(new Company("improvingEnterprises"));
                 var quarter = await _community.AddFactAsync(new Quarter(company, CurrentQuarter));
 
-                //var categoryGenerator = new CategoryGenerator(_community, company, quarter);
-                //await categoryGenerator.GenerateAsync();
+                var categoryGenerator = new CategoryGenerator(_community, company, quarter);
+                await categoryGenerator.GenerateAsync();
 
                 lock (this)
                 {

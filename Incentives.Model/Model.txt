@@ -1,0 +1,33 @@
+digraph "Incentives.Model"
+{
+    rankdir=BT
+    IndividualProfile -> Individual
+    IndividualProfile -> Profile
+    Profile__name -> Profile
+    Profile__name -> Profile__name [label="  *"]
+    Quarter -> Company
+    Category -> Company
+    Category__description -> Category
+    Category__description -> Category__description [label="  *"]
+    Category__ordinal -> Category
+    Category__ordinal -> Category__ordinal [label="  *"]
+    ActivityDefinition -> Category
+    ActivityDefinition__description -> ActivityDefinition
+    ActivityDefinition__description -> ActivityDefinition__description [label="  *"]
+    ActivityDefinition__qualifier -> ActivityDefinition
+    ActivityDefinition__qualifier -> ActivityDefinition__qualifier [label="  *"]
+    ActivityDefinition__ordinal -> ActivityDefinition
+    ActivityDefinition__ordinal -> ActivityDefinition__ordinal [label="  *"]
+    ActivityReward -> ActivityDefinition
+    ActivityReward -> Quarter
+    ActivityReward__points -> ActivityReward
+    ActivityReward__points -> ActivityReward__points [label="  *"]
+    ProfileQuarter -> Profile
+    ProfileQuarter -> Quarter
+    Activity -> ProfileQuarter
+    Activity -> ActivityReward
+    Activity__description -> Activity
+    Activity__description -> Activity__description [label="  *"]
+    Activity__multiplier -> Activity
+    Activity__multiplier -> Activity__multiplier [label="  *"]
+}

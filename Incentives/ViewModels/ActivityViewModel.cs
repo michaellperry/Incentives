@@ -66,8 +66,7 @@ namespace Incentives.ViewModels
         {
             get
             {
-                if (_activitySelection.ActivityReward == null ||
-                    _activitySelection.ActivityReward.Definition == null)
+                if (_activitySelection.ActivityReward == null)
                     return null;
 
                 return _activitySelection.ActivityReward.Definition.Qualifier;
@@ -78,8 +77,10 @@ namespace Incentives.ViewModels
         {
             get
             {
-                return _activitySelection.ActivityReward != null &&
-                       _activitySelection.ActivityReward.Points.Candidates.Any();
+                if (_activitySelection.ActivityReward == null)
+                    return false;
+
+                return _activitySelection.ActivityReward.Points.Candidates.Any();
             }
         }
 
@@ -106,8 +107,7 @@ namespace Incentives.ViewModels
             {
                 return
                     from reward in _quarter.Rewards
-                    where reward.Definition != null
-                       && reward.Definition.Category == _activitySelection.Category
+                    where reward.Definition.Category == _activitySelection.Category
                        && reward.Definition.Ordinal.Candidates.Any()
                     orderby reward.Definition.Ordinal.Value
                     select new ActivityOptionViewModel(reward, _activitySelection);
@@ -123,7 +123,6 @@ namespace Incentives.ViewModels
                         _individual.Profiles.Any() &&
                         _activitySelection.Category != null &&
                         _activitySelection.ActivityReward != null &&
-                        _activitySelection.ActivityReward.Definition != null &&
                         _activitySelection.ActivityReward.Definition.Category ==
                             _activitySelection.Category &&
                         !String.IsNullOrWhiteSpace(_activitySelection.Description) &&

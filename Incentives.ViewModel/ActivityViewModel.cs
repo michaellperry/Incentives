@@ -22,27 +22,12 @@ namespace Incentives.ViewModel
 
         public string Category
         {
-            get
-            {
-                if (_activity.ActivityReward != null &&
-                    _activity.ActivityReward.Definition != null &&
-                    _activity.ActivityReward.Definition.Category != null)
-                    return _activity.ActivityReward.Definition.Category.Description;
-
-                return null;
-            }
+            get { return _activity.ActivityReward.Definition.Category.Description; }
         }
 
         public string Activity
         {
-            get
-            {
-                if (_activity.ActivityReward != null &&
-                    _activity.ActivityReward.Definition != null)
-                    return _activity.ActivityReward.Definition.Description;
-
-                return null;
-            }
+            get { return _activity.ActivityReward.Definition.Description; }
         }
 
         public string Description
@@ -54,18 +39,12 @@ namespace Incentives.ViewModel
         {
             get
             {
-                if (_activity.ActivityReward != null &&
-                    _activity.ActivityReward.Definition != null)
-                {
-                    if (string.IsNullOrEmpty(_activity.ActivityReward.Definition.Qualifier))
-                        return _activity.ActivityReward.Points.Value.ToString();
-                    else
-                        return String.Format("{0}/{1}",
-                            _activity.ActivityReward.Points.Value,
-                            _activity.ActivityReward.Definition.Qualifier.Value);
-                }
-
-                return null;
+                if (string.IsNullOrEmpty(_activity.ActivityReward.Definition.Qualifier))
+                    return _activity.ActivityReward.Points.Value.ToString();
+                else
+                    return String.Format("{0}/{1}",
+                        _activity.ActivityReward.Points.Value,
+                        _activity.ActivityReward.Definition.Qualifier.Value);
             }
         }
 
@@ -73,16 +52,11 @@ namespace Incentives.ViewModel
         {
             get
             {
-                if (_activity.ActivityReward != null)
-                {
-                    int multiplier = 1;
-                    if (_activity.Multiplier.Candidates.Any())
-                        multiplier = _activity.Multiplier.Value;
+                int multiplier = 1;
+                if (_activity.Multiplier.Candidates.Any())
+                    multiplier = _activity.Multiplier.Value;
 
-                    return _activity.ActivityReward.Points * multiplier;
-                }
-
-                return 0;
+                return _activity.ActivityReward.Points * multiplier;
             }
         }
     }

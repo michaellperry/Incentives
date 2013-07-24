@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UpdateControls.Correspondence;
 using UpdateControls.Correspondence.Mementos;
 using UpdateControls.Correspondence.Strategy;
@@ -78,28 +79,63 @@ namespace Incentives.Model
 				Individual fact = (Individual)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._anonymousId);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Individual.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Individual.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Individual", 1);
+			"Incentives.Model.Individual", 8);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Individual GetUnloadedInstance()
+        {
+            return new Individual((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Individual GetNullInstance()
+        {
+            return new Individual((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Individual> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Individual)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
 
         // Queries
-        public static Query MakeQueryProfiles()
+        private static Query _cacheQueryProfiles;
+
+        public static Query GetQueryProfiles()
 		{
-			return new Query()
-				.JoinSuccessors(IndividualProfile.RoleIndividual)
-				.JoinPredecessors(IndividualProfile.RoleProfile)
-            ;
+            if (_cacheQueryProfiles == null)
+            {
+			    _cacheQueryProfiles = new Query()
+		    		.JoinSuccessors(IndividualProfile.GetRoleIndividual())
+		    		.JoinPredecessors(IndividualProfile.GetRoleProfile())
+                ;
+            }
+            return _cacheQueryProfiles;
 		}
-        public static Query QueryProfiles = MakeQueryProfiles();
 
         // Predicates
 
@@ -129,7 +165,7 @@ namespace Incentives.Model
         // Result initializer
         private void InitializeResults()
         {
-            _profiles = new Result<Profile>(this, QueryProfiles);
+            _profiles = new Result<Profile>(this, GetQueryProfiles(), Profile.GetUnloadedInstance, Profile.GetNullInstance);
         }
 
         // Predecessor access
@@ -166,13 +202,6 @@ namespace Incentives.Model
 			{
 				IndividualProfile newFact = new IndividualProfile(memento);
 
-				// Create a memory stream from the memento data.
-				using (MemoryStream data = new MemoryStream(memento.Data))
-				{
-					using (BinaryReader output = new BinaryReader(data))
-					{
-					}
-				}
 
 				return newFact;
 			}
@@ -181,28 +210,74 @@ namespace Incentives.Model
 			{
 				IndividualProfile fact = (IndividualProfile)obj;
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return IndividualProfile.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return IndividualProfile.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.IndividualProfile", 1);
+			"Incentives.Model.IndividualProfile", 1770677136);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static IndividualProfile GetUnloadedInstance()
+        {
+            return new IndividualProfile((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static IndividualProfile GetNullInstance()
+        {
+            return new IndividualProfile((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<IndividualProfile> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (IndividualProfile)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleIndividual = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"individual",
-			new CorrespondenceFactType("Incentives.Model.Individual", 1),
-			false));
-        public static Role RoleProfile = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"profile",
-			new CorrespondenceFactType("Incentives.Model.Profile", 1),
-			false));
+        private static Role _cacheRoleIndividual;
+        public static Role GetRoleIndividual()
+        {
+            if (_cacheRoleIndividual == null)
+            {
+                _cacheRoleIndividual = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "individual",
+			        Individual._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleIndividual;
+        }
+        private static Role _cacheRoleProfile;
+        public static Role GetRoleProfile()
+        {
+            if (_cacheRoleProfile == null)
+            {
+                _cacheRoleProfile = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "profile",
+			        Profile._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleProfile;
+        }
 
         // Queries
 
@@ -223,16 +298,16 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _individual = new PredecessorObj<Individual>(this, RoleIndividual, individual);
-            _profile = new PredecessorObj<Profile>(this, RoleProfile, profile);
+            _individual = new PredecessorObj<Individual>(this, GetRoleIndividual(), individual);
+            _profile = new PredecessorObj<Profile>(this, GetRoleProfile(), profile);
         }
 
         // Hydration constructor
         private IndividualProfile(FactMemento memento)
         {
             InitializeResults();
-            _individual = new PredecessorObj<Individual>(this, RoleIndividual, memento);
-            _profile = new PredecessorObj<Profile>(this, RoleProfile, memento);
+            _individual = new PredecessorObj<Individual>(this, GetRoleIndividual(), memento, Individual.GetUnloadedInstance, Individual.GetNullInstance);
+            _profile = new PredecessorObj<Profile>(this, GetRoleProfile(), memento, Profile.GetUnloadedInstance, Profile.GetNullInstance);
         }
 
         // Result initializer
@@ -243,11 +318,11 @@ namespace Incentives.Model
         // Predecessor access
         public Individual Individual
         {
-            get { return _individual.Fact; }
+            get { return IsNull ? Individual.GetNullInstance() : _individual.Fact; }
         }
         public Profile Profile
         {
-            get { return _profile.Fact; }
+            get { return IsNull ? Profile.GetNullInstance() : _profile.Fact; }
         }
 
         // Field access
@@ -291,36 +366,76 @@ namespace Incentives.Model
 				Profile fact = (Profile)obj;
 				_fieldSerializerByType[typeof(Guid)].WriteData(output, fact._unique);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Profile.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Profile.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Profile", 1);
+			"Incentives.Model.Profile", 2);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Profile GetUnloadedInstance()
+        {
+            return new Profile((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Profile GetNullInstance()
+        {
+            return new Profile((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Profile> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Profile)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
 
         // Queries
-        public static Query MakeQueryName()
+        private static Query _cacheQueryName;
+
+        public static Query GetQueryName()
 		{
-			return new Query()
-				.JoinSuccessors(Profile__name.RoleProfile, Condition.WhereIsEmpty(Profile__name.MakeQueryIsCurrent())
+            if (_cacheQueryName == null)
+            {
+			    _cacheQueryName = new Query()
+    				.JoinSuccessors(Profile__name.GetRoleProfile(), Condition.WhereIsEmpty(Profile__name.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryName;
 		}
-        public static Query QueryName = MakeQueryName();
-        public static Query MakeQueryActivities()
+        private static Query _cacheQueryActivities;
+
+        public static Query GetQueryActivities()
 		{
-			return new Query()
-				.JoinSuccessors(ProfileQuarter.RoleProfile)
-				.JoinSuccessors(Activity.RoleProfileQuarter)
-            ;
+            if (_cacheQueryActivities == null)
+            {
+			    _cacheQueryActivities = new Query()
+		    		.JoinSuccessors(ProfileQuarter.GetRoleProfile())
+		    		.JoinSuccessors(Activity.GetRoleProfileQuarter())
+                ;
+            }
+            return _cacheQueryActivities;
 		}
-        public static Query QueryActivities = MakeQueryActivities();
 
         // Predicates
 
@@ -352,8 +467,8 @@ namespace Incentives.Model
         // Result initializer
         private void InitializeResults()
         {
-            _name = new Result<Profile__name>(this, QueryName);
-            _activities = new Result<Activity>(this, QueryActivities);
+            _name = new Result<Profile__name>(this, GetQueryName(), Profile__name.GetUnloadedInstance, Profile__name.GetNullInstance);
+            _activities = new Result<Activity>(this, GetQueryActivities(), Activity.GetUnloadedInstance, Activity.GetNullInstance);
         }
 
         // Predecessor access
@@ -421,40 +536,91 @@ namespace Incentives.Model
 				Profile__name fact = (Profile__name)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Profile__name.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Profile__name.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Profile__name", 1);
+			"Incentives.Model.Profile__name", 31410776);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Profile__name GetUnloadedInstance()
+        {
+            return new Profile__name((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Profile__name GetNullInstance()
+        {
+            return new Profile__name((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Profile__name> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Profile__name)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleProfile = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"profile",
-			new CorrespondenceFactType("Incentives.Model.Profile", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.Profile__name", 1),
-			false));
+        private static Role _cacheRoleProfile;
+        public static Role GetRoleProfile()
+        {
+            if (_cacheRoleProfile == null)
+            {
+                _cacheRoleProfile = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "profile",
+			        Profile._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleProfile;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        Profile__name._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(Profile__name.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(Profile__name.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Profile> _profile;
@@ -473,8 +639,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _profile = new PredecessorObj<Profile>(this, RoleProfile, profile);
-            _prior = new PredecessorList<Profile__name>(this, RolePrior, prior);
+            _profile = new PredecessorObj<Profile>(this, GetRoleProfile(), profile);
+            _prior = new PredecessorList<Profile__name>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -482,8 +648,8 @@ namespace Incentives.Model
         private Profile__name(FactMemento memento)
         {
             InitializeResults();
-            _profile = new PredecessorObj<Profile>(this, RoleProfile, memento);
-            _prior = new PredecessorList<Profile__name>(this, RolePrior, memento);
+            _profile = new PredecessorObj<Profile>(this, GetRoleProfile(), memento, Profile.GetUnloadedInstance, Profile.GetNullInstance);
+            _prior = new PredecessorList<Profile__name>(this, GetRolePrior(), memento, Profile__name.GetUnloadedInstance, Profile__name.GetNullInstance);
         }
 
         // Result initializer
@@ -494,13 +660,13 @@ namespace Incentives.Model
         // Predecessor access
         public Profile Profile
         {
-            get { return _profile.Fact; }
+            get { return IsNull ? Profile.GetNullInstance() : _profile.Fact; }
         }
-        public IEnumerable<Profile__name> Prior
+        public PredecessorList<Profile__name> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public string Value
         {
@@ -546,27 +712,62 @@ namespace Incentives.Model
 				Company fact = (Company)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._identifier);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Company.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Company.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Company", 1);
+			"Incentives.Model.Company", 8);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Company GetUnloadedInstance()
+        {
+            return new Company((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Company GetNullInstance()
+        {
+            return new Company((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Company> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Company)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
 
         // Queries
-        public static Query MakeQueryCategories()
+        private static Query _cacheQueryCategories;
+
+        public static Query GetQueryCategories()
 		{
-			return new Query()
-				.JoinSuccessors(Category.RoleCompany)
-            ;
+            if (_cacheQueryCategories == null)
+            {
+			    _cacheQueryCategories = new Query()
+		    		.JoinSuccessors(Category.GetRoleCompany())
+                ;
+            }
+            return _cacheQueryCategories;
 		}
-        public static Query QueryCategories = MakeQueryCategories();
 
         // Predicates
 
@@ -596,7 +797,7 @@ namespace Incentives.Model
         // Result initializer
         private void InitializeResults()
         {
-            _categories = new Result<Category>(this, QueryCategories);
+            _categories = new Result<Category>(this, GetQueryCategories(), Category.GetUnloadedInstance, Category.GetNullInstance);
         }
 
         // Predecessor access
@@ -650,32 +851,75 @@ namespace Incentives.Model
 				Quarter fact = (Quarter)obj;
 				_fieldSerializerByType[typeof(DateTime)].WriteData(output, fact._startDate);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Quarter.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Quarter.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Quarter", 1);
+			"Incentives.Model.Quarter", -1633137520);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Quarter GetUnloadedInstance()
+        {
+            return new Quarter((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Quarter GetNullInstance()
+        {
+            return new Quarter((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Quarter> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Quarter)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleCompany = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"company",
-			new CorrespondenceFactType("Incentives.Model.Company", 1),
-			false));
+        private static Role _cacheRoleCompany;
+        public static Role GetRoleCompany()
+        {
+            if (_cacheRoleCompany == null)
+            {
+                _cacheRoleCompany = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "company",
+			        Company._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleCompany;
+        }
 
         // Queries
-        public static Query MakeQueryRewards()
+        private static Query _cacheQueryRewards;
+
+        public static Query GetQueryRewards()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityReward.RoleQuarter)
-            ;
+            if (_cacheQueryRewards == null)
+            {
+			    _cacheQueryRewards = new Query()
+		    		.JoinSuccessors(ActivityReward.GetRoleQuarter())
+                ;
+            }
+            return _cacheQueryRewards;
 		}
-        public static Query QueryRewards = MakeQueryRewards();
 
         // Predicates
 
@@ -695,7 +939,7 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _company = new PredecessorObj<Company>(this, RoleCompany, company);
+            _company = new PredecessorObj<Company>(this, GetRoleCompany(), company);
             _startDate = startDate;
         }
 
@@ -703,19 +947,19 @@ namespace Incentives.Model
         private Quarter(FactMemento memento)
         {
             InitializeResults();
-            _company = new PredecessorObj<Company>(this, RoleCompany, memento);
+            _company = new PredecessorObj<Company>(this, GetRoleCompany(), memento, Company.GetUnloadedInstance, Company.GetNullInstance);
         }
 
         // Result initializer
         private void InitializeResults()
         {
-            _rewards = new Result<ActivityReward>(this, QueryRewards);
+            _rewards = new Result<ActivityReward>(this, GetQueryRewards(), ActivityReward.GetUnloadedInstance, ActivityReward.GetNullInstance);
         }
 
         // Predecessor access
         public Company Company
         {
-            get { return _company.Fact; }
+            get { return IsNull ? Company.GetNullInstance() : _company.Fact; }
         }
 
         // Field access
@@ -767,48 +1011,101 @@ namespace Incentives.Model
 				Category fact = (Category)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._identifier);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Category.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Category.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Category", 1);
+			"Incentives.Model.Category", -1633137568);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Category GetUnloadedInstance()
+        {
+            return new Category((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Category GetNullInstance()
+        {
+            return new Category((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Category> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Category)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleCompany = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"company",
-			new CorrespondenceFactType("Incentives.Model.Company", 1),
-			false));
+        private static Role _cacheRoleCompany;
+        public static Role GetRoleCompany()
+        {
+            if (_cacheRoleCompany == null)
+            {
+                _cacheRoleCompany = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "company",
+			        Company._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleCompany;
+        }
 
         // Queries
-        public static Query MakeQueryDescription()
+        private static Query _cacheQueryDescription;
+
+        public static Query GetQueryDescription()
 		{
-			return new Query()
-				.JoinSuccessors(Category__description.RoleCategory, Condition.WhereIsEmpty(Category__description.MakeQueryIsCurrent())
+            if (_cacheQueryDescription == null)
+            {
+			    _cacheQueryDescription = new Query()
+    				.JoinSuccessors(Category__description.GetRoleCategory(), Condition.WhereIsEmpty(Category__description.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryDescription;
 		}
-        public static Query QueryDescription = MakeQueryDescription();
-        public static Query MakeQueryOrdinal()
+        private static Query _cacheQueryOrdinal;
+
+        public static Query GetQueryOrdinal()
 		{
-			return new Query()
-				.JoinSuccessors(Category__ordinal.RoleCategory, Condition.WhereIsEmpty(Category__ordinal.MakeQueryIsCurrent())
+            if (_cacheQueryOrdinal == null)
+            {
+			    _cacheQueryOrdinal = new Query()
+    				.JoinSuccessors(Category__ordinal.GetRoleCategory(), Condition.WhereIsEmpty(Category__ordinal.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryOrdinal;
 		}
-        public static Query QueryOrdinal = MakeQueryOrdinal();
-        public static Query MakeQueryActivities()
+        private static Query _cacheQueryActivities;
+
+        public static Query GetQueryActivities()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition.RoleCategory)
-            ;
+            if (_cacheQueryActivities == null)
+            {
+			    _cacheQueryActivities = new Query()
+		    		.JoinSuccessors(ActivityDefinition.GetRoleCategory())
+                ;
+            }
+            return _cacheQueryActivities;
 		}
-        public static Query QueryActivities = MakeQueryActivities();
 
         // Predicates
 
@@ -830,7 +1127,7 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _company = new PredecessorObj<Company>(this, RoleCompany, company);
+            _company = new PredecessorObj<Company>(this, GetRoleCompany(), company);
             _identifier = identifier;
         }
 
@@ -838,21 +1135,21 @@ namespace Incentives.Model
         private Category(FactMemento memento)
         {
             InitializeResults();
-            _company = new PredecessorObj<Company>(this, RoleCompany, memento);
+            _company = new PredecessorObj<Company>(this, GetRoleCompany(), memento, Company.GetUnloadedInstance, Company.GetNullInstance);
         }
 
         // Result initializer
         private void InitializeResults()
         {
-            _description = new Result<Category__description>(this, QueryDescription);
-            _ordinal = new Result<Category__ordinal>(this, QueryOrdinal);
-            _activities = new Result<ActivityDefinition>(this, QueryActivities);
+            _description = new Result<Category__description>(this, GetQueryDescription(), Category__description.GetUnloadedInstance, Category__description.GetNullInstance);
+            _ordinal = new Result<Category__ordinal>(this, GetQueryOrdinal(), Category__ordinal.GetUnloadedInstance, Category__ordinal.GetNullInstance);
+            _activities = new Result<ActivityDefinition>(this, GetQueryActivities(), ActivityDefinition.GetUnloadedInstance, ActivityDefinition.GetNullInstance);
         }
 
         // Predecessor access
         public Company Company
         {
-            get { return _company.Fact; }
+            get { return IsNull ? Company.GetNullInstance() : _company.Fact; }
         }
 
         // Field access
@@ -936,40 +1233,91 @@ namespace Incentives.Model
 				Category__description fact = (Category__description)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Category__description.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Category__description.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Category__description", 1);
+			"Incentives.Model.Category__description", -306270328);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Category__description GetUnloadedInstance()
+        {
+            return new Category__description((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Category__description GetNullInstance()
+        {
+            return new Category__description((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Category__description> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Category__description)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleCategory = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"category",
-			new CorrespondenceFactType("Incentives.Model.Category", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.Category__description", 1),
-			false));
+        private static Role _cacheRoleCategory;
+        public static Role GetRoleCategory()
+        {
+            if (_cacheRoleCategory == null)
+            {
+                _cacheRoleCategory = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "category",
+			        Category._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleCategory;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        Category__description._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(Category__description.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(Category__description.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Category> _category;
@@ -988,8 +1336,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _category = new PredecessorObj<Category>(this, RoleCategory, category);
-            _prior = new PredecessorList<Category__description>(this, RolePrior, prior);
+            _category = new PredecessorObj<Category>(this, GetRoleCategory(), category);
+            _prior = new PredecessorList<Category__description>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -997,8 +1345,8 @@ namespace Incentives.Model
         private Category__description(FactMemento memento)
         {
             InitializeResults();
-            _category = new PredecessorObj<Category>(this, RoleCategory, memento);
-            _prior = new PredecessorList<Category__description>(this, RolePrior, memento);
+            _category = new PredecessorObj<Category>(this, GetRoleCategory(), memento, Category.GetUnloadedInstance, Category.GetNullInstance);
+            _prior = new PredecessorList<Category__description>(this, GetRolePrior(), memento, Category__description.GetUnloadedInstance, Category__description.GetNullInstance);
         }
 
         // Result initializer
@@ -1009,13 +1357,13 @@ namespace Incentives.Model
         // Predecessor access
         public Category Category
         {
-            get { return _category.Fact; }
+            get { return IsNull ? Category.GetNullInstance() : _category.Fact; }
         }
-        public IEnumerable<Category__description> Prior
+        public PredecessorList<Category__description> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public string Value
         {
@@ -1061,40 +1409,91 @@ namespace Incentives.Model
 				Category__ordinal fact = (Category__ordinal)obj;
 				_fieldSerializerByType[typeof(int)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Category__ordinal.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Category__ordinal.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Category__ordinal", 1);
+			"Incentives.Model.Category__ordinal", -306270316);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Category__ordinal GetUnloadedInstance()
+        {
+            return new Category__ordinal((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Category__ordinal GetNullInstance()
+        {
+            return new Category__ordinal((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Category__ordinal> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Category__ordinal)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleCategory = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"category",
-			new CorrespondenceFactType("Incentives.Model.Category", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.Category__ordinal", 1),
-			false));
+        private static Role _cacheRoleCategory;
+        public static Role GetRoleCategory()
+        {
+            if (_cacheRoleCategory == null)
+            {
+                _cacheRoleCategory = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "category",
+			        Category._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleCategory;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        Category__ordinal._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(Category__ordinal.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(Category__ordinal.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Category> _category;
@@ -1113,8 +1512,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _category = new PredecessorObj<Category>(this, RoleCategory, category);
-            _prior = new PredecessorList<Category__ordinal>(this, RolePrior, prior);
+            _category = new PredecessorObj<Category>(this, GetRoleCategory(), category);
+            _prior = new PredecessorList<Category__ordinal>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -1122,8 +1521,8 @@ namespace Incentives.Model
         private Category__ordinal(FactMemento memento)
         {
             InitializeResults();
-            _category = new PredecessorObj<Category>(this, RoleCategory, memento);
-            _prior = new PredecessorList<Category__ordinal>(this, RolePrior, memento);
+            _category = new PredecessorObj<Category>(this, GetRoleCategory(), memento, Category.GetUnloadedInstance, Category.GetNullInstance);
+            _prior = new PredecessorList<Category__ordinal>(this, GetRolePrior(), memento, Category__ordinal.GetUnloadedInstance, Category__ordinal.GetNullInstance);
         }
 
         // Result initializer
@@ -1134,13 +1533,13 @@ namespace Incentives.Model
         // Predecessor access
         public Category Category
         {
-            get { return _category.Fact; }
+            get { return IsNull ? Category.GetNullInstance() : _category.Fact; }
         }
-        public IEnumerable<Category__ordinal> Prior
+        public PredecessorList<Category__ordinal> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public int Value
         {
@@ -1186,49 +1585,102 @@ namespace Incentives.Model
 				ActivityDefinition fact = (ActivityDefinition)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._identifier);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ActivityDefinition.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ActivityDefinition.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ActivityDefinition", 1);
+			"Incentives.Model.ActivityDefinition", -671524912);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ActivityDefinition GetUnloadedInstance()
+        {
+            return new ActivityDefinition((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ActivityDefinition GetNullInstance()
+        {
+            return new ActivityDefinition((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ActivityDefinition> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ActivityDefinition)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleCategory = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"category",
-			new CorrespondenceFactType("Incentives.Model.Category", 1),
-			false));
+        private static Role _cacheRoleCategory;
+        public static Role GetRoleCategory()
+        {
+            if (_cacheRoleCategory == null)
+            {
+                _cacheRoleCategory = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "category",
+			        Category._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleCategory;
+        }
 
         // Queries
-        public static Query MakeQueryDescription()
+        private static Query _cacheQueryDescription;
+
+        public static Query GetQueryDescription()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition__description.RoleActivityDefinition, Condition.WhereIsEmpty(ActivityDefinition__description.MakeQueryIsCurrent())
+            if (_cacheQueryDescription == null)
+            {
+			    _cacheQueryDescription = new Query()
+    				.JoinSuccessors(ActivityDefinition__description.GetRoleActivityDefinition(), Condition.WhereIsEmpty(ActivityDefinition__description.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryDescription;
 		}
-        public static Query QueryDescription = MakeQueryDescription();
-        public static Query MakeQueryQualifier()
+        private static Query _cacheQueryQualifier;
+
+        public static Query GetQueryQualifier()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition__qualifier.RoleActivityDefinition, Condition.WhereIsEmpty(ActivityDefinition__qualifier.MakeQueryIsCurrent())
+            if (_cacheQueryQualifier == null)
+            {
+			    _cacheQueryQualifier = new Query()
+    				.JoinSuccessors(ActivityDefinition__qualifier.GetRoleActivityDefinition(), Condition.WhereIsEmpty(ActivityDefinition__qualifier.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryQualifier;
 		}
-        public static Query QueryQualifier = MakeQueryQualifier();
-        public static Query MakeQueryOrdinal()
+        private static Query _cacheQueryOrdinal;
+
+        public static Query GetQueryOrdinal()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition__ordinal.RoleActivityDefinition, Condition.WhereIsEmpty(ActivityDefinition__ordinal.MakeQueryIsCurrent())
+            if (_cacheQueryOrdinal == null)
+            {
+			    _cacheQueryOrdinal = new Query()
+    				.JoinSuccessors(ActivityDefinition__ordinal.GetRoleActivityDefinition(), Condition.WhereIsEmpty(ActivityDefinition__ordinal.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryOrdinal;
 		}
-        public static Query QueryOrdinal = MakeQueryOrdinal();
 
         // Predicates
 
@@ -1250,7 +1702,7 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _category = new PredecessorObj<Category>(this, RoleCategory, category);
+            _category = new PredecessorObj<Category>(this, GetRoleCategory(), category);
             _identifier = identifier;
         }
 
@@ -1258,21 +1710,21 @@ namespace Incentives.Model
         private ActivityDefinition(FactMemento memento)
         {
             InitializeResults();
-            _category = new PredecessorObj<Category>(this, RoleCategory, memento);
+            _category = new PredecessorObj<Category>(this, GetRoleCategory(), memento, Category.GetUnloadedInstance, Category.GetNullInstance);
         }
 
         // Result initializer
         private void InitializeResults()
         {
-            _description = new Result<ActivityDefinition__description>(this, QueryDescription);
-            _qualifier = new Result<ActivityDefinition__qualifier>(this, QueryQualifier);
-            _ordinal = new Result<ActivityDefinition__ordinal>(this, QueryOrdinal);
+            _description = new Result<ActivityDefinition__description>(this, GetQueryDescription(), ActivityDefinition__description.GetUnloadedInstance, ActivityDefinition__description.GetNullInstance);
+            _qualifier = new Result<ActivityDefinition__qualifier>(this, GetQueryQualifier(), ActivityDefinition__qualifier.GetUnloadedInstance, ActivityDefinition__qualifier.GetNullInstance);
+            _ordinal = new Result<ActivityDefinition__ordinal>(this, GetQueryOrdinal(), ActivityDefinition__ordinal.GetUnloadedInstance, ActivityDefinition__ordinal.GetNullInstance);
         }
 
         // Predecessor access
         public Category Category
         {
-            get { return _category.Fact; }
+            get { return IsNull ? Category.GetNullInstance() : _category.Fact; }
         }
 
         // Field access
@@ -1368,40 +1820,91 @@ namespace Incentives.Model
 				ActivityDefinition__description fact = (ActivityDefinition__description)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ActivityDefinition__description.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ActivityDefinition__description.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ActivityDefinition__description", 1);
+			"Incentives.Model.ActivityDefinition__description", 1415118048);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ActivityDefinition__description GetUnloadedInstance()
+        {
+            return new ActivityDefinition__description((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ActivityDefinition__description GetNullInstance()
+        {
+            return new ActivityDefinition__description((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ActivityDefinition__description> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ActivityDefinition__description)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleActivityDefinition = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activityDefinition",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition__description", 1),
-			false));
+        private static Role _cacheRoleActivityDefinition;
+        public static Role GetRoleActivityDefinition()
+        {
+            if (_cacheRoleActivityDefinition == null)
+            {
+                _cacheRoleActivityDefinition = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activityDefinition",
+			        ActivityDefinition._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivityDefinition;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        ActivityDefinition__description._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition__description.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(ActivityDefinition__description.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<ActivityDefinition> _activityDefinition;
@@ -1420,8 +1923,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, activityDefinition);
-            _prior = new PredecessorList<ActivityDefinition__description>(this, RolePrior, prior);
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, GetRoleActivityDefinition(), activityDefinition);
+            _prior = new PredecessorList<ActivityDefinition__description>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -1429,8 +1932,8 @@ namespace Incentives.Model
         private ActivityDefinition__description(FactMemento memento)
         {
             InitializeResults();
-            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, memento);
-            _prior = new PredecessorList<ActivityDefinition__description>(this, RolePrior, memento);
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, GetRoleActivityDefinition(), memento, ActivityDefinition.GetUnloadedInstance, ActivityDefinition.GetNullInstance);
+            _prior = new PredecessorList<ActivityDefinition__description>(this, GetRolePrior(), memento, ActivityDefinition__description.GetUnloadedInstance, ActivityDefinition__description.GetNullInstance);
         }
 
         // Result initializer
@@ -1441,13 +1944,13 @@ namespace Incentives.Model
         // Predecessor access
         public ActivityDefinition ActivityDefinition
         {
-            get { return _activityDefinition.Fact; }
+            get { return IsNull ? ActivityDefinition.GetNullInstance() : _activityDefinition.Fact; }
         }
-        public IEnumerable<ActivityDefinition__description> Prior
+        public PredecessorList<ActivityDefinition__description> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public string Value
         {
@@ -1493,40 +1996,91 @@ namespace Incentives.Model
 				ActivityDefinition__qualifier fact = (ActivityDefinition__qualifier)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ActivityDefinition__qualifier.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ActivityDefinition__qualifier.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ActivityDefinition__qualifier", 1);
+			"Incentives.Model.ActivityDefinition__qualifier", 1415118048);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ActivityDefinition__qualifier GetUnloadedInstance()
+        {
+            return new ActivityDefinition__qualifier((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ActivityDefinition__qualifier GetNullInstance()
+        {
+            return new ActivityDefinition__qualifier((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ActivityDefinition__qualifier> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ActivityDefinition__qualifier)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleActivityDefinition = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activityDefinition",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition__qualifier", 1),
-			false));
+        private static Role _cacheRoleActivityDefinition;
+        public static Role GetRoleActivityDefinition()
+        {
+            if (_cacheRoleActivityDefinition == null)
+            {
+                _cacheRoleActivityDefinition = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activityDefinition",
+			        ActivityDefinition._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivityDefinition;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        ActivityDefinition__qualifier._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition__qualifier.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(ActivityDefinition__qualifier.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<ActivityDefinition> _activityDefinition;
@@ -1545,8 +2099,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, activityDefinition);
-            _prior = new PredecessorList<ActivityDefinition__qualifier>(this, RolePrior, prior);
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, GetRoleActivityDefinition(), activityDefinition);
+            _prior = new PredecessorList<ActivityDefinition__qualifier>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -1554,8 +2108,8 @@ namespace Incentives.Model
         private ActivityDefinition__qualifier(FactMemento memento)
         {
             InitializeResults();
-            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, memento);
-            _prior = new PredecessorList<ActivityDefinition__qualifier>(this, RolePrior, memento);
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, GetRoleActivityDefinition(), memento, ActivityDefinition.GetUnloadedInstance, ActivityDefinition.GetNullInstance);
+            _prior = new PredecessorList<ActivityDefinition__qualifier>(this, GetRolePrior(), memento, ActivityDefinition__qualifier.GetUnloadedInstance, ActivityDefinition__qualifier.GetNullInstance);
         }
 
         // Result initializer
@@ -1566,13 +2120,13 @@ namespace Incentives.Model
         // Predecessor access
         public ActivityDefinition ActivityDefinition
         {
-            get { return _activityDefinition.Fact; }
+            get { return IsNull ? ActivityDefinition.GetNullInstance() : _activityDefinition.Fact; }
         }
-        public IEnumerable<ActivityDefinition__qualifier> Prior
+        public PredecessorList<ActivityDefinition__qualifier> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public string Value
         {
@@ -1618,40 +2172,91 @@ namespace Incentives.Model
 				ActivityDefinition__ordinal fact = (ActivityDefinition__ordinal)obj;
 				_fieldSerializerByType[typeof(int)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ActivityDefinition__ordinal.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ActivityDefinition__ordinal.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ActivityDefinition__ordinal", 1);
+			"Incentives.Model.ActivityDefinition__ordinal", 1415118060);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ActivityDefinition__ordinal GetUnloadedInstance()
+        {
+            return new ActivityDefinition__ordinal((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ActivityDefinition__ordinal GetNullInstance()
+        {
+            return new ActivityDefinition__ordinal((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ActivityDefinition__ordinal> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ActivityDefinition__ordinal)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleActivityDefinition = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activityDefinition",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition__ordinal", 1),
-			false));
+        private static Role _cacheRoleActivityDefinition;
+        public static Role GetRoleActivityDefinition()
+        {
+            if (_cacheRoleActivityDefinition == null)
+            {
+                _cacheRoleActivityDefinition = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activityDefinition",
+			        ActivityDefinition._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivityDefinition;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        ActivityDefinition__ordinal._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityDefinition__ordinal.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(ActivityDefinition__ordinal.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<ActivityDefinition> _activityDefinition;
@@ -1670,8 +2275,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, activityDefinition);
-            _prior = new PredecessorList<ActivityDefinition__ordinal>(this, RolePrior, prior);
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, GetRoleActivityDefinition(), activityDefinition);
+            _prior = new PredecessorList<ActivityDefinition__ordinal>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -1679,8 +2284,8 @@ namespace Incentives.Model
         private ActivityDefinition__ordinal(FactMemento memento)
         {
             InitializeResults();
-            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, RoleActivityDefinition, memento);
-            _prior = new PredecessorList<ActivityDefinition__ordinal>(this, RolePrior, memento);
+            _activityDefinition = new PredecessorObj<ActivityDefinition>(this, GetRoleActivityDefinition(), memento, ActivityDefinition.GetUnloadedInstance, ActivityDefinition.GetNullInstance);
+            _prior = new PredecessorList<ActivityDefinition__ordinal>(this, GetRolePrior(), memento, ActivityDefinition__ordinal.GetUnloadedInstance, ActivityDefinition__ordinal.GetNullInstance);
         }
 
         // Result initializer
@@ -1691,13 +2296,13 @@ namespace Incentives.Model
         // Predecessor access
         public ActivityDefinition ActivityDefinition
         {
-            get { return _activityDefinition.Fact; }
+            get { return IsNull ? ActivityDefinition.GetNullInstance() : _activityDefinition.Fact; }
         }
-        public IEnumerable<ActivityDefinition__ordinal> Prior
+        public PredecessorList<ActivityDefinition__ordinal> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public int Value
         {
@@ -1726,13 +2331,6 @@ namespace Incentives.Model
 			{
 				ActivityReward newFact = new ActivityReward(memento);
 
-				// Create a memory stream from the memento data.
-				using (MemoryStream data = new MemoryStream(memento.Data))
-				{
-					using (BinaryReader output = new BinaryReader(data))
-					{
-					}
-				}
 
 				return newFact;
 			}
@@ -1741,38 +2339,89 @@ namespace Incentives.Model
 			{
 				ActivityReward fact = (ActivityReward)obj;
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ActivityReward.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ActivityReward.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ActivityReward", 1);
+			"Incentives.Model.ActivityReward", 324210760);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ActivityReward GetUnloadedInstance()
+        {
+            return new ActivityReward((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ActivityReward GetNullInstance()
+        {
+            return new ActivityReward((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ActivityReward> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ActivityReward)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleDefinition = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"definition",
-			new CorrespondenceFactType("Incentives.Model.ActivityDefinition", 1),
-			false));
-        public static Role RoleQuarter = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"quarter",
-			new CorrespondenceFactType("Incentives.Model.Quarter", 1),
-			false));
+        private static Role _cacheRoleDefinition;
+        public static Role GetRoleDefinition()
+        {
+            if (_cacheRoleDefinition == null)
+            {
+                _cacheRoleDefinition = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "definition",
+			        ActivityDefinition._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleDefinition;
+        }
+        private static Role _cacheRoleQuarter;
+        public static Role GetRoleQuarter()
+        {
+            if (_cacheRoleQuarter == null)
+            {
+                _cacheRoleQuarter = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "quarter",
+			        Quarter._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleQuarter;
+        }
 
         // Queries
-        public static Query MakeQueryPoints()
+        private static Query _cacheQueryPoints;
+
+        public static Query GetQueryPoints()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityReward__points.RoleActivityReward, Condition.WhereIsEmpty(ActivityReward__points.MakeQueryIsCurrent())
+            if (_cacheQueryPoints == null)
+            {
+			    _cacheQueryPoints = new Query()
+    				.JoinSuccessors(ActivityReward__points.GetRoleActivityReward(), Condition.WhereIsEmpty(ActivityReward__points.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryPoints;
 		}
-        public static Query QueryPoints = MakeQueryPoints();
 
         // Predicates
 
@@ -1792,32 +2441,32 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _definition = new PredecessorObj<ActivityDefinition>(this, RoleDefinition, definition);
-            _quarter = new PredecessorObj<Quarter>(this, RoleQuarter, quarter);
+            _definition = new PredecessorObj<ActivityDefinition>(this, GetRoleDefinition(), definition);
+            _quarter = new PredecessorObj<Quarter>(this, GetRoleQuarter(), quarter);
         }
 
         // Hydration constructor
         private ActivityReward(FactMemento memento)
         {
             InitializeResults();
-            _definition = new PredecessorObj<ActivityDefinition>(this, RoleDefinition, memento);
-            _quarter = new PredecessorObj<Quarter>(this, RoleQuarter, memento);
+            _definition = new PredecessorObj<ActivityDefinition>(this, GetRoleDefinition(), memento, ActivityDefinition.GetUnloadedInstance, ActivityDefinition.GetNullInstance);
+            _quarter = new PredecessorObj<Quarter>(this, GetRoleQuarter(), memento, Quarter.GetUnloadedInstance, Quarter.GetNullInstance);
         }
 
         // Result initializer
         private void InitializeResults()
         {
-            _points = new Result<ActivityReward__points>(this, QueryPoints);
+            _points = new Result<ActivityReward__points>(this, GetQueryPoints(), ActivityReward__points.GetUnloadedInstance, ActivityReward__points.GetNullInstance);
         }
 
         // Predecessor access
         public ActivityDefinition Definition
         {
-            get { return _definition.Fact; }
+            get { return IsNull ? ActivityDefinition.GetNullInstance() : _definition.Fact; }
         }
         public Quarter Quarter
         {
-            get { return _quarter.Fact; }
+            get { return IsNull ? Quarter.GetNullInstance() : _quarter.Fact; }
         }
 
         // Field access
@@ -1877,40 +2526,91 @@ namespace Incentives.Model
 				ActivityReward__points fact = (ActivityReward__points)obj;
 				_fieldSerializerByType[typeof(int)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ActivityReward__points.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ActivityReward__points.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ActivityReward__points", 1);
+			"Incentives.Model.ActivityReward__points", -1644304724);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ActivityReward__points GetUnloadedInstance()
+        {
+            return new ActivityReward__points((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ActivityReward__points GetNullInstance()
+        {
+            return new ActivityReward__points((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ActivityReward__points> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ActivityReward__points)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleActivityReward = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activityReward",
-			new CorrespondenceFactType("Incentives.Model.ActivityReward", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.ActivityReward__points", 1),
-			false));
+        private static Role _cacheRoleActivityReward;
+        public static Role GetRoleActivityReward()
+        {
+            if (_cacheRoleActivityReward == null)
+            {
+                _cacheRoleActivityReward = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activityReward",
+			        ActivityReward._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivityReward;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        ActivityReward__points._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(ActivityReward__points.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(ActivityReward__points.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<ActivityReward> _activityReward;
@@ -1929,8 +2629,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _activityReward = new PredecessorObj<ActivityReward>(this, RoleActivityReward, activityReward);
-            _prior = new PredecessorList<ActivityReward__points>(this, RolePrior, prior);
+            _activityReward = new PredecessorObj<ActivityReward>(this, GetRoleActivityReward(), activityReward);
+            _prior = new PredecessorList<ActivityReward__points>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -1938,8 +2638,8 @@ namespace Incentives.Model
         private ActivityReward__points(FactMemento memento)
         {
             InitializeResults();
-            _activityReward = new PredecessorObj<ActivityReward>(this, RoleActivityReward, memento);
-            _prior = new PredecessorList<ActivityReward__points>(this, RolePrior, memento);
+            _activityReward = new PredecessorObj<ActivityReward>(this, GetRoleActivityReward(), memento, ActivityReward.GetUnloadedInstance, ActivityReward.GetNullInstance);
+            _prior = new PredecessorList<ActivityReward__points>(this, GetRolePrior(), memento, ActivityReward__points.GetUnloadedInstance, ActivityReward__points.GetNullInstance);
         }
 
         // Result initializer
@@ -1950,13 +2650,13 @@ namespace Incentives.Model
         // Predecessor access
         public ActivityReward ActivityReward
         {
-            get { return _activityReward.Fact; }
+            get { return IsNull ? ActivityReward.GetNullInstance() : _activityReward.Fact; }
         }
-        public IEnumerable<ActivityReward__points> Prior
+        public PredecessorList<ActivityReward__points> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public int Value
         {
@@ -1985,13 +2685,6 @@ namespace Incentives.Model
 			{
 				ProfileQuarter newFact = new ProfileQuarter(memento);
 
-				// Create a memory stream from the memento data.
-				using (MemoryStream data = new MemoryStream(memento.Data))
-				{
-					using (BinaryReader output = new BinaryReader(data))
-					{
-					}
-				}
 
 				return newFact;
 			}
@@ -2000,28 +2693,74 @@ namespace Incentives.Model
 			{
 				ProfileQuarter fact = (ProfileQuarter)obj;
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return ProfileQuarter.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return ProfileQuarter.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.ProfileQuarter", 1);
+			"Incentives.Model.ProfileQuarter", 1413676816);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static ProfileQuarter GetUnloadedInstance()
+        {
+            return new ProfileQuarter((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static ProfileQuarter GetNullInstance()
+        {
+            return new ProfileQuarter((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<ProfileQuarter> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (ProfileQuarter)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleProfile = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"profile",
-			new CorrespondenceFactType("Incentives.Model.Profile", 1),
-			false));
-        public static Role RoleQuarter = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"quarter",
-			new CorrespondenceFactType("Incentives.Model.Quarter", 1),
-			false));
+        private static Role _cacheRoleProfile;
+        public static Role GetRoleProfile()
+        {
+            if (_cacheRoleProfile == null)
+            {
+                _cacheRoleProfile = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "profile",
+			        Profile._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleProfile;
+        }
+        private static Role _cacheRoleQuarter;
+        public static Role GetRoleQuarter()
+        {
+            if (_cacheRoleQuarter == null)
+            {
+                _cacheRoleQuarter = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "quarter",
+			        Quarter._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleQuarter;
+        }
 
         // Queries
 
@@ -2042,16 +2781,16 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _profile = new PredecessorObj<Profile>(this, RoleProfile, profile);
-            _quarter = new PredecessorObj<Quarter>(this, RoleQuarter, quarter);
+            _profile = new PredecessorObj<Profile>(this, GetRoleProfile(), profile);
+            _quarter = new PredecessorObj<Quarter>(this, GetRoleQuarter(), quarter);
         }
 
         // Hydration constructor
         private ProfileQuarter(FactMemento memento)
         {
             InitializeResults();
-            _profile = new PredecessorObj<Profile>(this, RoleProfile, memento);
-            _quarter = new PredecessorObj<Quarter>(this, RoleQuarter, memento);
+            _profile = new PredecessorObj<Profile>(this, GetRoleProfile(), memento, Profile.GetUnloadedInstance, Profile.GetNullInstance);
+            _quarter = new PredecessorObj<Quarter>(this, GetRoleQuarter(), memento, Quarter.GetUnloadedInstance, Quarter.GetNullInstance);
         }
 
         // Result initializer
@@ -2062,11 +2801,11 @@ namespace Incentives.Model
         // Predecessor access
         public Profile Profile
         {
-            get { return _profile.Fact; }
+            get { return IsNull ? Profile.GetNullInstance() : _profile.Fact; }
         }
         public Quarter Quarter
         {
-            get { return _quarter.Fact; }
+            get { return IsNull ? Quarter.GetNullInstance() : _quarter.Fact; }
         }
 
         // Field access
@@ -2110,46 +2849,102 @@ namespace Incentives.Model
 				Activity fact = (Activity)obj;
 				_fieldSerializerByType[typeof(DateTime)].WriteData(output, fact._activityDate);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Activity.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Activity.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Activity", 1);
+			"Incentives.Model.Activity", -105423760);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Activity GetUnloadedInstance()
+        {
+            return new Activity((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Activity GetNullInstance()
+        {
+            return new Activity((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Activity> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Activity)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleProfileQuarter = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"profileQuarter",
-			new CorrespondenceFactType("Incentives.Model.ProfileQuarter", 1),
-			false));
-        public static Role RoleActivityReward = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activityReward",
-			new CorrespondenceFactType("Incentives.Model.ActivityReward", 1),
-			false));
+        private static Role _cacheRoleProfileQuarter;
+        public static Role GetRoleProfileQuarter()
+        {
+            if (_cacheRoleProfileQuarter == null)
+            {
+                _cacheRoleProfileQuarter = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "profileQuarter",
+			        ProfileQuarter._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleProfileQuarter;
+        }
+        private static Role _cacheRoleActivityReward;
+        public static Role GetRoleActivityReward()
+        {
+            if (_cacheRoleActivityReward == null)
+            {
+                _cacheRoleActivityReward = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activityReward",
+			        ActivityReward._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivityReward;
+        }
 
         // Queries
-        public static Query MakeQueryDescription()
+        private static Query _cacheQueryDescription;
+
+        public static Query GetQueryDescription()
 		{
-			return new Query()
-				.JoinSuccessors(Activity__description.RoleActivity, Condition.WhereIsEmpty(Activity__description.MakeQueryIsCurrent())
+            if (_cacheQueryDescription == null)
+            {
+			    _cacheQueryDescription = new Query()
+    				.JoinSuccessors(Activity__description.GetRoleActivity(), Condition.WhereIsEmpty(Activity__description.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryDescription;
 		}
-        public static Query QueryDescription = MakeQueryDescription();
-        public static Query MakeQueryMultiplier()
+        private static Query _cacheQueryMultiplier;
+
+        public static Query GetQueryMultiplier()
 		{
-			return new Query()
-				.JoinSuccessors(Activity__multiplier.RoleActivity, Condition.WhereIsEmpty(Activity__multiplier.MakeQueryIsCurrent())
+            if (_cacheQueryMultiplier == null)
+            {
+			    _cacheQueryMultiplier = new Query()
+    				.JoinSuccessors(Activity__multiplier.GetRoleActivity(), Condition.WhereIsEmpty(Activity__multiplier.GetQueryIsCurrent())
 				)
-            ;
+                ;
+            }
+            return _cacheQueryMultiplier;
 		}
-        public static Query QueryMultiplier = MakeQueryMultiplier();
 
         // Predicates
 
@@ -2172,8 +2967,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _profileQuarter = new PredecessorObj<ProfileQuarter>(this, RoleProfileQuarter, profileQuarter);
-            _activityReward = new PredecessorObj<ActivityReward>(this, RoleActivityReward, activityReward);
+            _profileQuarter = new PredecessorObj<ProfileQuarter>(this, GetRoleProfileQuarter(), profileQuarter);
+            _activityReward = new PredecessorObj<ActivityReward>(this, GetRoleActivityReward(), activityReward);
             _activityDate = activityDate;
         }
 
@@ -2181,25 +2976,25 @@ namespace Incentives.Model
         private Activity(FactMemento memento)
         {
             InitializeResults();
-            _profileQuarter = new PredecessorObj<ProfileQuarter>(this, RoleProfileQuarter, memento);
-            _activityReward = new PredecessorObj<ActivityReward>(this, RoleActivityReward, memento);
+            _profileQuarter = new PredecessorObj<ProfileQuarter>(this, GetRoleProfileQuarter(), memento, ProfileQuarter.GetUnloadedInstance, ProfileQuarter.GetNullInstance);
+            _activityReward = new PredecessorObj<ActivityReward>(this, GetRoleActivityReward(), memento, ActivityReward.GetUnloadedInstance, ActivityReward.GetNullInstance);
         }
 
         // Result initializer
         private void InitializeResults()
         {
-            _description = new Result<Activity__description>(this, QueryDescription);
-            _multiplier = new Result<Activity__multiplier>(this, QueryMultiplier);
+            _description = new Result<Activity__description>(this, GetQueryDescription(), Activity__description.GetUnloadedInstance, Activity__description.GetNullInstance);
+            _multiplier = new Result<Activity__multiplier>(this, GetQueryMultiplier(), Activity__multiplier.GetUnloadedInstance, Activity__multiplier.GetNullInstance);
         }
 
         // Predecessor access
         public ProfileQuarter ProfileQuarter
         {
-            get { return _profileQuarter.Fact; }
+            get { return IsNull ? ProfileQuarter.GetNullInstance() : _profileQuarter.Fact; }
         }
         public ActivityReward ActivityReward
         {
-            get { return _activityReward.Fact; }
+            get { return IsNull ? ActivityReward.GetNullInstance() : _activityReward.Fact; }
         }
 
         // Field access
@@ -2279,40 +3074,91 @@ namespace Incentives.Model
 				Activity__description fact = (Activity__description)obj;
 				_fieldSerializerByType[typeof(string)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Activity__description.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Activity__description.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Activity__description", 1);
+			"Incentives.Model.Activity__description", 54889504);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Activity__description GetUnloadedInstance()
+        {
+            return new Activity__description((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Activity__description GetNullInstance()
+        {
+            return new Activity__description((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Activity__description> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Activity__description)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleActivity = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activity",
-			new CorrespondenceFactType("Incentives.Model.Activity", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.Activity__description", 1),
-			false));
+        private static Role _cacheRoleActivity;
+        public static Role GetRoleActivity()
+        {
+            if (_cacheRoleActivity == null)
+            {
+                _cacheRoleActivity = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activity",
+			        Activity._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivity;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        Activity__description._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(Activity__description.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(Activity__description.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Activity> _activity;
@@ -2331,8 +3177,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _activity = new PredecessorObj<Activity>(this, RoleActivity, activity);
-            _prior = new PredecessorList<Activity__description>(this, RolePrior, prior);
+            _activity = new PredecessorObj<Activity>(this, GetRoleActivity(), activity);
+            _prior = new PredecessorList<Activity__description>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -2340,8 +3186,8 @@ namespace Incentives.Model
         private Activity__description(FactMemento memento)
         {
             InitializeResults();
-            _activity = new PredecessorObj<Activity>(this, RoleActivity, memento);
-            _prior = new PredecessorList<Activity__description>(this, RolePrior, memento);
+            _activity = new PredecessorObj<Activity>(this, GetRoleActivity(), memento, Activity.GetUnloadedInstance, Activity.GetNullInstance);
+            _prior = new PredecessorList<Activity__description>(this, GetRolePrior(), memento, Activity__description.GetUnloadedInstance, Activity__description.GetNullInstance);
         }
 
         // Result initializer
@@ -2352,13 +3198,13 @@ namespace Incentives.Model
         // Predecessor access
         public Activity Activity
         {
-            get { return _activity.Fact; }
+            get { return IsNull ? Activity.GetNullInstance() : _activity.Fact; }
         }
-        public IEnumerable<Activity__description> Prior
+        public PredecessorList<Activity__description> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public string Value
         {
@@ -2404,40 +3250,91 @@ namespace Incentives.Model
 				Activity__multiplier fact = (Activity__multiplier)obj;
 				_fieldSerializerByType[typeof(int)].WriteData(output, fact._value);
 			}
+
+            public CorrespondenceFact GetUnloadedInstance()
+            {
+                return Activity__multiplier.GetUnloadedInstance();
+            }
+
+            public CorrespondenceFact GetNullInstance()
+            {
+                return Activity__multiplier.GetNullInstance();
+            }
 		}
 
 		// Type
 		internal static CorrespondenceFactType _correspondenceFactType = new CorrespondenceFactType(
-			"Incentives.Model.Activity__multiplier", 1);
+			"Incentives.Model.Activity__multiplier", 54889516);
 
 		protected override CorrespondenceFactType GetCorrespondenceFactType()
 		{
 			return _correspondenceFactType;
 		}
 
+        // Null and unloaded instances
+        public static Activity__multiplier GetUnloadedInstance()
+        {
+            return new Activity__multiplier((FactMemento)null) { IsLoaded = false };
+        }
+
+        public static Activity__multiplier GetNullInstance()
+        {
+            return new Activity__multiplier((FactMemento)null) { IsNull = true };
+        }
+
+        // Ensure
+        public Task<Activity__multiplier> EnsureAsync()
+        {
+            if (_loadedTask != null)
+                return _loadedTask.ContinueWith(t => (Activity__multiplier)t.Result);
+            else
+                return Task.FromResult(this);
+        }
+
         // Roles
-        public static Role RoleActivity = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"activity",
-			new CorrespondenceFactType("Incentives.Model.Activity", 1),
-			false));
-        public static Role RolePrior = new Role(new RoleMemento(
-			_correspondenceFactType,
-			"prior",
-			new CorrespondenceFactType("Incentives.Model.Activity__multiplier", 1),
-			false));
+        private static Role _cacheRoleActivity;
+        public static Role GetRoleActivity()
+        {
+            if (_cacheRoleActivity == null)
+            {
+                _cacheRoleActivity = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "activity",
+			        Activity._correspondenceFactType,
+			        false));
+            }
+            return _cacheRoleActivity;
+        }
+        private static Role _cacheRolePrior;
+        public static Role GetRolePrior()
+        {
+            if (_cacheRolePrior == null)
+            {
+                _cacheRolePrior = new Role(new RoleMemento(
+			        _correspondenceFactType,
+			        "prior",
+			        Activity__multiplier._correspondenceFactType,
+			        false));
+            }
+            return _cacheRolePrior;
+        }
 
         // Queries
-        public static Query MakeQueryIsCurrent()
+        private static Query _cacheQueryIsCurrent;
+
+        public static Query GetQueryIsCurrent()
 		{
-			return new Query()
-				.JoinSuccessors(Activity__multiplier.RolePrior)
-            ;
+            if (_cacheQueryIsCurrent == null)
+            {
+			    _cacheQueryIsCurrent = new Query()
+		    		.JoinSuccessors(Activity__multiplier.GetRolePrior())
+                ;
+            }
+            return _cacheQueryIsCurrent;
 		}
-        public static Query QueryIsCurrent = MakeQueryIsCurrent();
 
         // Predicates
-        public static Condition IsCurrent = Condition.WhereIsEmpty(QueryIsCurrent);
+        public static Condition IsCurrent = Condition.WhereIsEmpty(GetQueryIsCurrent());
 
         // Predecessors
         private PredecessorObj<Activity> _activity;
@@ -2456,8 +3353,8 @@ namespace Incentives.Model
             )
         {
             InitializeResults();
-            _activity = new PredecessorObj<Activity>(this, RoleActivity, activity);
-            _prior = new PredecessorList<Activity__multiplier>(this, RolePrior, prior);
+            _activity = new PredecessorObj<Activity>(this, GetRoleActivity(), activity);
+            _prior = new PredecessorList<Activity__multiplier>(this, GetRolePrior(), prior);
             _value = value;
         }
 
@@ -2465,8 +3362,8 @@ namespace Incentives.Model
         private Activity__multiplier(FactMemento memento)
         {
             InitializeResults();
-            _activity = new PredecessorObj<Activity>(this, RoleActivity, memento);
-            _prior = new PredecessorList<Activity__multiplier>(this, RolePrior, memento);
+            _activity = new PredecessorObj<Activity>(this, GetRoleActivity(), memento, Activity.GetUnloadedInstance, Activity.GetNullInstance);
+            _prior = new PredecessorList<Activity__multiplier>(this, GetRolePrior(), memento, Activity__multiplier.GetUnloadedInstance, Activity__multiplier.GetNullInstance);
         }
 
         // Result initializer
@@ -2477,13 +3374,13 @@ namespace Incentives.Model
         // Predecessor access
         public Activity Activity
         {
-            get { return _activity.Fact; }
+            get { return IsNull ? Activity.GetNullInstance() : _activity.Fact; }
         }
-        public IEnumerable<Activity__multiplier> Prior
+        public PredecessorList<Activity__multiplier> Prior
         {
             get { return _prior; }
         }
-     
+
         // Field access
         public int Value
         {
@@ -2507,7 +3404,7 @@ namespace Incentives.Model
 				new FactMetadata(new List<CorrespondenceFactType> { Individual._correspondenceFactType }));
 			community.AddQuery(
 				Individual._correspondenceFactType,
-				Individual.QueryProfiles.QueryDefinition);
+				Individual.GetQueryProfiles().QueryDefinition);
 			community.AddType(
 				IndividualProfile._correspondenceFactType,
 				new IndividualProfile.CorrespondenceFactFactory(fieldSerializerByType),
@@ -2518,106 +3415,106 @@ namespace Incentives.Model
 				new FactMetadata(new List<CorrespondenceFactType> { Profile._correspondenceFactType }));
 			community.AddQuery(
 				Profile._correspondenceFactType,
-				Profile.QueryName.QueryDefinition);
+				Profile.GetQueryName().QueryDefinition);
 			community.AddQuery(
 				Profile._correspondenceFactType,
-				Profile.QueryActivities.QueryDefinition);
+				Profile.GetQueryActivities().QueryDefinition);
 			community.AddType(
 				Profile__name._correspondenceFactType,
 				new Profile__name.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Profile__name._correspondenceFactType }));
 			community.AddQuery(
 				Profile__name._correspondenceFactType,
-				Profile__name.QueryIsCurrent.QueryDefinition);
+				Profile__name.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				Company._correspondenceFactType,
 				new Company.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Company._correspondenceFactType }));
 			community.AddQuery(
 				Company._correspondenceFactType,
-				Company.QueryCategories.QueryDefinition);
+				Company.GetQueryCategories().QueryDefinition);
 			community.AddType(
 				Quarter._correspondenceFactType,
 				new Quarter.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Quarter._correspondenceFactType }));
 			community.AddQuery(
 				Quarter._correspondenceFactType,
-				Quarter.QueryRewards.QueryDefinition);
+				Quarter.GetQueryRewards().QueryDefinition);
 			community.AddType(
 				Category._correspondenceFactType,
 				new Category.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Category._correspondenceFactType }));
 			community.AddQuery(
 				Category._correspondenceFactType,
-				Category.QueryDescription.QueryDefinition);
+				Category.GetQueryDescription().QueryDefinition);
 			community.AddQuery(
 				Category._correspondenceFactType,
-				Category.QueryOrdinal.QueryDefinition);
+				Category.GetQueryOrdinal().QueryDefinition);
 			community.AddQuery(
 				Category._correspondenceFactType,
-				Category.QueryActivities.QueryDefinition);
+				Category.GetQueryActivities().QueryDefinition);
 			community.AddType(
 				Category__description._correspondenceFactType,
 				new Category__description.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Category__description._correspondenceFactType }));
 			community.AddQuery(
 				Category__description._correspondenceFactType,
-				Category__description.QueryIsCurrent.QueryDefinition);
+				Category__description.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				Category__ordinal._correspondenceFactType,
 				new Category__ordinal.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Category__ordinal._correspondenceFactType }));
 			community.AddQuery(
 				Category__ordinal._correspondenceFactType,
-				Category__ordinal.QueryIsCurrent.QueryDefinition);
+				Category__ordinal.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				ActivityDefinition._correspondenceFactType,
 				new ActivityDefinition.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { ActivityDefinition._correspondenceFactType }));
 			community.AddQuery(
 				ActivityDefinition._correspondenceFactType,
-				ActivityDefinition.QueryDescription.QueryDefinition);
+				ActivityDefinition.GetQueryDescription().QueryDefinition);
 			community.AddQuery(
 				ActivityDefinition._correspondenceFactType,
-				ActivityDefinition.QueryQualifier.QueryDefinition);
+				ActivityDefinition.GetQueryQualifier().QueryDefinition);
 			community.AddQuery(
 				ActivityDefinition._correspondenceFactType,
-				ActivityDefinition.QueryOrdinal.QueryDefinition);
+				ActivityDefinition.GetQueryOrdinal().QueryDefinition);
 			community.AddType(
 				ActivityDefinition__description._correspondenceFactType,
 				new ActivityDefinition__description.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { ActivityDefinition__description._correspondenceFactType }));
 			community.AddQuery(
 				ActivityDefinition__description._correspondenceFactType,
-				ActivityDefinition__description.QueryIsCurrent.QueryDefinition);
+				ActivityDefinition__description.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				ActivityDefinition__qualifier._correspondenceFactType,
 				new ActivityDefinition__qualifier.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { ActivityDefinition__qualifier._correspondenceFactType }));
 			community.AddQuery(
 				ActivityDefinition__qualifier._correspondenceFactType,
-				ActivityDefinition__qualifier.QueryIsCurrent.QueryDefinition);
+				ActivityDefinition__qualifier.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				ActivityDefinition__ordinal._correspondenceFactType,
 				new ActivityDefinition__ordinal.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { ActivityDefinition__ordinal._correspondenceFactType }));
 			community.AddQuery(
 				ActivityDefinition__ordinal._correspondenceFactType,
-				ActivityDefinition__ordinal.QueryIsCurrent.QueryDefinition);
+				ActivityDefinition__ordinal.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				ActivityReward._correspondenceFactType,
 				new ActivityReward.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { ActivityReward._correspondenceFactType }));
 			community.AddQuery(
 				ActivityReward._correspondenceFactType,
-				ActivityReward.QueryPoints.QueryDefinition);
+				ActivityReward.GetQueryPoints().QueryDefinition);
 			community.AddType(
 				ActivityReward__points._correspondenceFactType,
 				new ActivityReward__points.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { ActivityReward__points._correspondenceFactType }));
 			community.AddQuery(
 				ActivityReward__points._correspondenceFactType,
-				ActivityReward__points.QueryIsCurrent.QueryDefinition);
+				ActivityReward__points.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				ProfileQuarter._correspondenceFactType,
 				new ProfileQuarter.CorrespondenceFactFactory(fieldSerializerByType),
@@ -2628,24 +3525,24 @@ namespace Incentives.Model
 				new FactMetadata(new List<CorrespondenceFactType> { Activity._correspondenceFactType }));
 			community.AddQuery(
 				Activity._correspondenceFactType,
-				Activity.QueryDescription.QueryDefinition);
+				Activity.GetQueryDescription().QueryDefinition);
 			community.AddQuery(
 				Activity._correspondenceFactType,
-				Activity.QueryMultiplier.QueryDefinition);
+				Activity.GetQueryMultiplier().QueryDefinition);
 			community.AddType(
 				Activity__description._correspondenceFactType,
 				new Activity__description.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Activity__description._correspondenceFactType }));
 			community.AddQuery(
 				Activity__description._correspondenceFactType,
-				Activity__description.QueryIsCurrent.QueryDefinition);
+				Activity__description.GetQueryIsCurrent().QueryDefinition);
 			community.AddType(
 				Activity__multiplier._correspondenceFactType,
 				new Activity__multiplier.CorrespondenceFactFactory(fieldSerializerByType),
 				new FactMetadata(new List<CorrespondenceFactType> { Activity__multiplier._correspondenceFactType }));
 			community.AddQuery(
 				Activity__multiplier._correspondenceFactType,
-				Activity__multiplier.QueryIsCurrent.QueryDefinition);
+				Activity__multiplier.GetQueryIsCurrent().QueryDefinition);
 		}
 	}
 }
